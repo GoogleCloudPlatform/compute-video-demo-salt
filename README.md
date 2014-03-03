@@ -1,5 +1,4 @@
-compute-video-demo-salt
-=======================
+# compute-video-demo-salt
 
 This is the supporting documentation for **Using SaltStack with Google
 Compute Engine**, one of the topics covered in the
@@ -133,7 +132,7 @@ through this gcutil ssh command, go ahead and log back out.
     root@salt:~# 
     ```
 
-# Salt-Cloud setup
+## Salt-Cloud setup
 
 1. The `salt-cloud` utility has its own set of configuration files. This repo
 contains the sample configuration files needed for the demo, but you will need
@@ -154,8 +153,19 @@ utility,
 for your converted Service Account key, make sure to also adjust the
 `service_account_private_key` variable.
 
+1. Now that `salt-cloud` is configured, you'll need to copy over the demo
+state files that configure each minion.
+    ```
+    cp -R REPO_DIR/srv /srv
+    ```
 
-# Create Minions
+# Demo time!
+
+You've now completed all of the necessary setup to replicate the demo as
+shown on the video. Now, you'll use `salt-cloud` to create and bootstrap
+the minions, install Apache, and set up a Compute Engine load-balancer.
+
+## Create Minions
 
 1. Use the `salt-cloud` command to create the Salt minions based on the
 attributes in the configuration files. For the four instances, this
@@ -168,13 +178,7 @@ the minions simultaneously.
     salt-cloud -P -y -m /etc/salt/demo.map --out=pprint
     ```
 
-# Minion configuration
-
-1. Now that `salt-cloud` is configured, you'll need to copy over the demo
-state files that configure each minion.
-    ```
-    cp -R REPO_DIR/srv /srv
-    ```
+## Minion configuration
 
 1. You can update your minions with the demo state files to install Apache,
 enable `mod_headers`, and set a custom landing page for the site by running
@@ -183,7 +187,7 @@ triggerin the `highstate`. This should take around 15-20 seconds to complete.
     salt '*' state.highstate --out=pprint
     ```
 
-# Firewall rule
+## Firewall rule
 
 1. Great, now you have salt minions serving a custom site page via Apache!
 But if you've tried to view one of your instance's site via it's public IP,
@@ -206,7 +210,7 @@ minimum required parameters to create the rule. This command should take around
 into your browser and you should be able to see a simple web page with the
 instance name.
 
-# Load-balancer
+## Load-balancer
 
 1. Now that you've created the minions, each serving a custom site page via
 Apache, you'll want to set up a Compute Engine
