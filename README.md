@@ -49,7 +49,6 @@ Create the Salt master either with the `gcutil` command-line utility (part
 of the Cloud SDK) or in the [Developers Console](https://cloud.google.com/console)
 If you name your instance `salt`, your Compute Engine instance minions will
 naturally resolve the short hostname.
-
     ```
     # Make sure to use a Debian-7-wheezy image for this demo
     gcutil addinstance salt
@@ -89,17 +88,13 @@ The easist way to do this is to use the gcutil command-line utility and
 try to SSH into the local instance.  Since you are using the root account,
 you need an additional flag.
 
-Cut/paste the generated URL into a browser that is authenticated with your
+    Cut/paste the generated URL into a browser that is authenticated with your
 Google account. Accept the OAuth permissions and cut/paste the verification
 code into your terminal.
 
-When prompted, used an Empty Passphrase for the demo. Once logged in through
-this gcutil ssh command, go ahead and log back out.
-    ```
-    gcutil ssh --ssh_key_push_wait_time=30 --permit_root_ssh $(hostname -s)
-    ```
-
-The full output will look similar to,
+    When prompted, used an Empty Passphrase for the demo. Once logged in through
+this gcutil ssh command, go ahead and log back out. The full output will look
+similar to,
     ```
     root@salt:~# gcutil ssh --ssh_key_push_wait_time=30 --permit_root_ssh $(hostname -s)
     Service account scopes are not enabled for default on this instance. Using manual authentication.
@@ -174,6 +169,7 @@ should take roughly 2 minutes to create the new Compute Engine
 instances and bootstrap them with the Salt agent software.  Note that we're
 specifying the parallel-mode (`-P`) to create all of the minions
 simultaneously.
+
     ```
     salt-cloud -P -y -m /etc/salt/demo.map --out=pprint
     ```
@@ -183,6 +179,7 @@ simultaneously.
 1. You can update your minions with the demo state files to install Apache,
 enable `mod_headers`, and set a custom landing page for the site by running
 triggering `highstate`. This should take around 15-20 seconds to complete.
+
     ```
     salt '*' state.highstate
     ```
@@ -223,10 +220,9 @@ This command should take around 10-15 seconds to complete.
     salt-cloud -f create_lb gce name=lb region=us-central1 ports=80 members=myinstance1,myinstance2,myinstance3,myinstance4 --out=pprint
     ```
 
-1. The output from this command should display the public IP address associated
-with your new load-balancer. Look for something like,
-    ```
-    ```
+1. The output from this command will display the public IP address associated
+with your new load-balancer. You can also look in the Developers Console
+under the Load-Balancer section and look at your Forwarding Rules.
 
 1. Ok, let's test it out! Put the public IP address of your load-balancer into
 your browser and take a look at the result. Within a few seconds you should
@@ -258,11 +254,13 @@ accumulate additional charges if you leave do not remove these resources.
 Fortunately, `salt-cloud` also provides commands for destroying Compute
 Engine resources. The following commands can be used to destroy all of the
 resources created for this demo.
+
     ```
     salt-cloud -d -m /etc/salt/demo.map
     salt-cloud -f delete_fwrule gce name=allow-http
     salt-cloud -f delete_lb gce name=lb
     ```
+
 ## Contributing
 
 Have a patch that will benefit this project? Awesome! Follow these steps to have it accepted.
