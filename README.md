@@ -45,7 +45,7 @@ as instructed.
 
 ## Create the Salt Master Compute Engine instance
 
-    Create the Salt master either with the `gcutil` command-line utility (part
+Create the Salt master either with the `gcutil` command-line utility (part
 of the Cloud SDK) or in the [Developers Console](https://cloud.google.com/console)
 If you name your instance `salt`, your Compute Engine instance minions will
 naturally resolve the short hostname.
@@ -88,12 +88,12 @@ The easist way to do this is to use the gcutil command-line utility and
 try to SSH into the local instance.  Since you are using the root account,
 you need an additional flag.
 
-    Cut/paste the generated URL into a browser that is authenticated with
-your Google account. Accept the OAuth permissions and cut/paste the
-verification code into your terminal.
+Cut/paste the generated URL into a browser that is authenticated with your
+Google account. Accept the OAuth permissions and cut/paste the verification
+code into your terminal.
 
-    When prompted, used an Empty Passphrase for the demo. Once logged in
-through this gcutil ssh command, go ahead and log back out.
+When prompted, used an Empty Passphrase for the demo. Once logged in through
+this gcutil ssh command, go ahead and log back out.
     ```
     gcutil ssh --ssh_key_push_wait_time=30 --permit_root_ssh $(hostname -s)
     ```
@@ -172,8 +172,8 @@ attributes in the configuration files. For the four instances, this
 should take roughly 2 minutes to create the new Compute Engine
 instances and bootstrap them with the Salt agent software.
 
-    Note that we're specifying the parallel-mode (`-P`) to create all of
-the minions simultaneously.
+Note that we're specifying the parallel-mode (`-P`) to create all of the
+minions simultaneously.
     ```
     salt-cloud -P -y -m /etc/salt/demo.map --out=pprint
     ```
@@ -182,9 +182,9 @@ the minions simultaneously.
 
 1. You can update your minions with the demo state files to install Apache,
 enable `mod_headers`, and set a custom landing page for the site by running
-triggerin the `highstate`. This should take around 15-20 seconds to complete.
+triggering `highstate`. This should take around 15-20 seconds to complete.
     ```
-    salt '*' state.highstate --out=pprint
+    salt '*' state.highstate
     ```
 
 ## Firewall rule
@@ -197,7 +197,7 @@ external network traffic is allowed to reach your Compute Engine instances
 your instances, you must first create a firewall rule on your `default`
 network.
 
-    Fortunately, `salt-cloud` has this capability. If you're not used to the
+Fortunately, `salt-cloud` has this capability. If you're not used to the
 syntax below, you are calling the `create_fwrule` function (`-f`) and
 specifying the privider (`gce` in this case). Next, you are providing the
 minimum required parameters to create the rule. This command should take around
@@ -233,7 +233,7 @@ your browser and take a look at the result. Within a few seconds you should
 start to see a flicker of pages that will randomly bounce across each of your
 instances.
 
-    For the demo, a javascript function is set to fire when the page loads
+For the demo, a javascript function is set to fire when the page loads
 that pauses for a half-second, and then reloads itself. Since we installed
 a modified Apache configuraiton file to disable client-side caching *and* we
 enabled Apache's `mod_headers`, each "reload" results in a new HTTP request
@@ -243,7 +243,7 @@ between instances.
 
 # All done!
 
-    That's it for the demo. There is a lot of other functionality for
+That's it for the demo. There is a lot of other functionality for
 Compute Engine in the `salt-cloud` utility. Please take a look at the
 [docs](http://docs.saltstack.com/topics/cloud/gce.html) for a full set of
 instructions and sample commands.
@@ -251,15 +251,15 @@ instructions and sample commands.
 
 ## Cleaning up
 
-    When you're done with the demo, make sure to tear down all of your
+When you're done with the demo, make sure to tear down all of your
 instances and clean-up. You will get charged for this usage and you will
 accumulate additional charges if you leave do not remove these resources.
 
-    Fortunately, `salt-cloud` also provides commands for destroying Compute
+Fortunately, `salt-cloud` also provides commands for destroying Compute
 Engine resources. The following commands can be used to destroy all of the
 resources created for this demo.
     ```
-    salt-cloud -P -d -m /etc/salt/demo.map
+    salt-cloud -d -m /etc/salt/demo.map
     salt-cloud -f delete_fwrule gce name=allow-http
     salt-cloud -f delete_lb gce name=lb
     ```
