@@ -75,8 +75,8 @@ gcutil addinstance salt
     ```
 
 1. Install salt (Hydrogen, v2014.1.0)
-        ```
-        curl -o salt_install.sh -L http://bootstrap.saltstack.org
+    ```
+    curl -o salt_install.sh -L http://bootstrap.saltstack.org
     sh salt_install.sh -M -N git v2014.1.0
 
     # sigh... gce is broken in 2014.1.0
@@ -164,24 +164,26 @@ the minions, install Apache, and set up a Compute Engine load-balancer.
 
 ## Create Minions
 
-1. Use the `salt-cloud` command to create the Salt minions based on the
+Use the `salt-cloud` command to create the Salt minions based on the
 attributes in the configuration files. For the four instances, this
 should take roughly 2 minutes to create the new Compute Engine
 instances and bootstrap them with the Salt agent software.  Note that we're
 specifying the parallel-mode (`-P`) to create all of the minions
 simultaneously.
-    ```
-    salt-cloud -P -y -m /etc/salt/demo.map --out=pprint
-    ```
+
+```
+salt-cloud -P -y -m /etc/salt/demo.map --out=pprint
+```
 
 ## Minion configuration
 
-1. You can update your minions with the demo state files to install Apache,
+You can update your minions with the demo state files to install Apache,
 enable `mod_headers`, and set a custom landing page for the site by running
 triggering `highstate`. This should take around 15-20 seconds to complete.
-    ```
-    salt '*' state.highstate
-    ```
+
+```
+salt '*' state.highstate
+```
 
 ## Firewall rule
 
