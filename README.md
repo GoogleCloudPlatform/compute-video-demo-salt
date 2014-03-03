@@ -58,35 +58,31 @@ gcutil addinstance salt
 ## Software
 
 1. SSH to your Salt master and then become root
-
-```
-gcutil ssh salt
-sudo -i
-```
+    ```
+    gcutil ssh salt
+    sudo -i
+    ```
 
 1. Update packages and install dependencies
-
-```
-apt-get update
-apt-get install python-pip git -y
-```
+    ```
+    apt-get update
+    apt-get install python-pip git -y
+    ```
 
 1. Install libcloud (v0.14.1 or greater)
-
-```
-pip install apache-libcloud
-```
+    ```
+    pip install apache-libcloud
+    ```
 
 1. Install salt (Hydrogen, v2014.1.0)
+        ```
+        curl -o salt_install.sh -L http://bootstrap.saltstack.org
+    sh salt_install.sh -M -N git v2014.1.0
 
-```
-curl -o salt_install.sh -L http://bootstrap.saltstack.org
-sh salt_install.sh -M -N git v2014.1.0
-
-# sigh... gce is broken in 2014.1.0
-wget https://raw.github.com/saltstack/salt/develop/salt/cloud/clouds/gce.py
-cp gce.py /usr/lib/python2.7/dist-packages/salt/cloud/clouds/gce.py
-```
+    # sigh... gce is broken in 2014.1.0
+    wget https://raw.github.com/saltstack/salt/develop/salt/cloud/clouds/gce.py
+    cp gce.py /usr/lib/python2.7/dist-packages/salt/cloud/clouds/gce.py
+    ```
 
 1. Create a Compute Engine SSH key and upload it to the metadata server.
 The easist way to do this is to use the gcutil command-line utility and
@@ -100,57 +96,54 @@ code into your terminal.
     When prompted, used an Empty Passphrase for the demo. Once logged in through
 this gcutil ssh command, go ahead and log back out. The full output will look
 similar to,
+    ```
+    root@salt:~# gcutil ssh --ssh_key_push_wait_time=30 --permit_root_ssh $(hostname -s)
+    Service account scopes are not enabled for default on this instance. Using manual authentication.
+    Go to the following link in your browser:
 
-```
-root@salt:~# gcutil ssh --ssh_key_push_wait_time=30 --permit_root_ssh $(hostname -s)
-Service account scopes are not enabled for default on this instance. Using manual authentication.
-Go to the following link in your browser:
+        https://accounts.google.com/o/oauth2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcompute+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdevstorage.full_control+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&redirect_uri=urn%3Aietf%3Awg%3Aoauth%3A2.0%3Aoob&response_type=code&client_id=1111111111111.apps.googleusercontent.com&access_type=offline
 
-    https://accounts.google.com/o/oauth2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcompute+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdevstorage.full_control+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&redirect_uri=urn%3Aietf%3Awg%3Aoauth%3A2.0%3Aoob&response_type=code&client_id=1111111111111.apps.googleusercontent.com&access_type=offline
+    Enter verification code: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    Authentication successful.
+    INFO: Zone for salt detected as us-central1-b.
+    WARNING: You don't have an ssh key for Google Compute Engine. Creating one now...
+    Enter passphrase (empty for no passphrase): 
+    Enter same passphrase again: 
+    INFO: Updated project with new ssh key. It can take several minutes for the instance to pick up the key.
+    INFO: Waiting 30 seconds before attempting to connect.
+    INFO: Running command line: ssh -o UserKnownHostsFile=/dev/null -o CheckHostIP=no -o StrictHostKeyChecking=no -i /root/.ssh/google_compute_engine -A -p 22 root@123.45.67.89 --
+    Warning: Permanently added '123.45.67.89' (ECDSA) to the list of known hosts.
+    Linux salt 3.2.0-4-amd64 #1 SMP Debian 3.2.51-1 x86_64
 
-Enter verification code: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-Authentication successful.
-INFO: Zone for salt detected as us-central1-b.
-WARNING: You don't have an ssh key for Google Compute Engine. Creating one now...
-Enter passphrase (empty for no passphrase): 
-Enter same passphrase again: 
-INFO: Updated project with new ssh key. It can take several minutes for the instance to pick up the key.
-INFO: Waiting 30 seconds before attempting to connect.
-INFO: Running command line: ssh -o UserKnownHostsFile=/dev/null -o CheckHostIP=no -o StrictHostKeyChecking=no -i /root/.ssh/google_compute_engine -A -p 22 root@123.45.67.89 --
-Warning: Permanently added '123.45.67.89' (ECDSA) to the list of known hosts.
-Linux salt 3.2.0-4-amd64 #1 SMP Debian 3.2.51-1 x86_64
+    The programs included with the Debian GNU/Linux system are free software;
+    the exact distribution terms for each program are described in the
+    individual files in /usr/share/doc/*/copyright.
 
-The programs included with the Debian GNU/Linux system are free software;
-the exact distribution terms for each program are described in the
-individual files in /usr/share/doc/*/copyright.
-
-Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
-permitted by applicable law.
-root@salt:~# exit
-logout
-Connection to 162.222.180.195 closed.
-WARNING: There is a new version of gcutil available. Go to: https://developers.google.com/compute/docs/gcutil
-WARNING: Your version of gcutil is 1.12.0, the latest version is 1.13.0.
-root@salt:~# 
-```
+    Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+    permitted by applicable law.
+    root@salt:~# exit
+    logout
+    Connection to 162.222.180.195 closed.
+    WARNING: There is a new version of gcutil available. Go to: https://developers.google.com/compute/docs/gcutil
+    WARNING: Your version of gcutil is 1.12.0, the latest version is 1.13.0.
+    root@salt:~# 
+    ```
 
 ## Salt-Cloud setup
 
 1. The `salt-cloud` utility has its own set of configuration files. This repo
 contains the sample configuration files needed for the demo, but you will need
 to customize them with your credentials.
-
-```
-cp -R REPO_DIR/etc/* /etc
-```
+    ```
+    cp -R REPO_DIR/etc/* /etc
+    ```
 
 1. You will need to convert the Service Account private key file from the
 PKCS12 format to the RSA/PEM file format.  You can do that with the `openssl`
 utility,
-
-```
-openssl pkcs12 -in /path/to/original/key.p12 -passin pass:notasecret -nodes -nocerts | openssl rsa -out /etc/salt/pkey.pem
-```
+    ```
+    openssl pkcs12 -in /path/to/original/key.p12 -passin pass:notasecret -nodes -nocerts | openssl rsa -out /etc/salt/pkey.pem
+    ```
 
 1. Edit the `/etc/salt/cloud` file and specify your `project` and
 `service_account_email_address`. Note that if you used an alternate location
@@ -159,10 +152,9 @@ for your converted Service Account key, make sure to also adjust the
 
 1. Now that `salt-cloud` is configured, you'll need to copy over the demo
 state files that configure each minion.
-
-```
-cp -R REPO_DIR/srv/* /srv
-```
+    ```
+    cp -R REPO_DIR/srv/* /srv
+    ```
 
 # Demo time!
 
@@ -178,20 +170,18 @@ should take roughly 2 minutes to create the new Compute Engine
 instances and bootstrap them with the Salt agent software.  Note that we're
 specifying the parallel-mode (`-P`) to create all of the minions
 simultaneously.
-
-```
-salt-cloud -P -y -m /etc/salt/demo.map --out=pprint
-```
+    ```
+    salt-cloud -P -y -m /etc/salt/demo.map --out=pprint
+    ```
 
 ## Minion configuration
 
 1. You can update your minions with the demo state files to install Apache,
 enable `mod_headers`, and set a custom landing page for the site by running
 triggering `highstate`. This should take around 15-20 seconds to complete.
-
-```
-salt '*' state.highstate
-```
+    ```
+    salt '*' state.highstate
+    ```
 
 ## Firewall rule
 
@@ -208,10 +198,9 @@ syntax below, you are calling the `create_fwrule` function (`-f`) and
 specifying the privider (`gce` in this case). Next, you are providing the
 minimum required parameters to create the rule. This command should take around
 5-10 seconds to complete.
-
-```
-salt-cloud -f create_fwrule gce name=allow-http network=default allow=tcp:80 --out=pprint
-```
+    ```
+    salt-cloud -f create_fwrule gce name=allow-http network=default allow=tcp:80 --out=pprint
+    ```
 
 1. Now, if you like, you can put the public IP address of one of your instances
 into your browser and you should be able to see a simple web page with the
@@ -226,10 +215,9 @@ You can use `salt-cloud` with a command similar to the one below. Make sure
 you specify the correct `region` where your instances reside (this is likely
 `us-central1` if you've used all of the default files in this repository.
 This command should take around 10-15 seconds to complete.
-
-```
-salt-cloud -f create_lb gce name=lb region=us-central1 ports=80 members=myinstance1,myinstance2,myinstance3,myinstance4 --out=pprint
-```
+    ```
+    salt-cloud -f create_lb gce name=lb region=us-central1 ports=80 members=myinstance1,myinstance2,myinstance3,myinstance4 --out=pprint
+    ```
 
 1. The output from this command will display the public IP address associated
 with your new load-balancer. You can also look in the Developers Console
@@ -254,7 +242,6 @@ That's it for the demo. There is a lot of other functionality for
 Compute Engine in the `salt-cloud` utility. Please take a look at the
 [docs](http://docs.saltstack.com/topics/cloud/gce.html) for a full set of
 instructions and sample commands.
-
 
 ## Cleaning up
 
