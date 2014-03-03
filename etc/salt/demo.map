@@ -1,0 +1,6 @@
+zone1a:
+  - myinstance1
+  - myinstance3
+zone1b:
+  - myinstance2
+  - myinstance4

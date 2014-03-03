@@ -1,0 +1,7 @@
+providers:
+  gce-config:
+    project: '...'
+    service_account_email_address: '...@developer.gserviceaccount.com'
+    service_account_private_key: '/etc/salt/pkey.pem'
+    provider: gce
+
