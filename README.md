@@ -49,6 +49,7 @@ Create the Salt master either with the `gcutil` command-line utility (part
 of the Cloud SDK) or in the [Developers Console](https://cloud.google.com/console)
 If you name your instance `salt`, your Compute Engine instance minions will
 naturally resolve the short hostname.
+
     ```
     # Make sure to use a Debian-7-wheezy image for this demo
     gcutil addinstance salt
@@ -98,7 +99,7 @@ this gcutil ssh command, go ahead and log back out.
     gcutil ssh --ssh_key_push_wait_time=30 --permit_root_ssh $(hostname -s)
     ```
 
-    The full output will look similar to,
+The full output will look similar to,
     ```
     root@salt:~# gcutil ssh --ssh_key_push_wait_time=30 --permit_root_ssh $(hostname -s)
     Service account scopes are not enabled for default on this instance. Using manual authentication.
@@ -138,7 +139,7 @@ this gcutil ssh command, go ahead and log back out.
 contains the sample configuration files needed for the demo, but you will need
 to customize them with your credentials.
     ```
-    cp -R REPO_DIR/etc /etc
+    cp -R REPO_DIR/etc/* /etc
     ```
 
 1. You will need to convert the Service Account private key file from the
@@ -156,7 +157,7 @@ for your converted Service Account key, make sure to also adjust the
 1. Now that `salt-cloud` is configured, you'll need to copy over the demo
 state files that configure each minion.
     ```
-    cp -R REPO_DIR/srv /srv
+    cp -R REPO_DIR/srv/* /srv
     ```
 
 # Demo time!
@@ -170,10 +171,9 @@ the minions, install Apache, and set up a Compute Engine load-balancer.
 1. Use the `salt-cloud` command to create the Salt minions based on the
 attributes in the configuration files. For the four instances, this
 should take roughly 2 minutes to create the new Compute Engine
-instances and bootstrap them with the Salt agent software.
-
-Note that we're specifying the parallel-mode (`-P`) to create all of the
-minions simultaneously.
+instances and bootstrap them with the Salt agent software.  Note that we're
+specifying the parallel-mode (`-P`) to create all of the minions
+simultaneously.
     ```
     salt-cloud -P -y -m /etc/salt/demo.map --out=pprint
     ```
@@ -197,7 +197,7 @@ external network traffic is allowed to reach your Compute Engine instances
 your instances, you must first create a firewall rule on your `default`
 network.
 
-Fortunately, `salt-cloud` has this capability. If you're not used to the
+    Fortunately, `salt-cloud` has this capability. If you're not used to the
 syntax below, you are calling the `create_fwrule` function (`-f`) and
 specifying the privider (`gce` in this case). Next, you are providing the
 minimum required parameters to create the rule. This command should take around
@@ -233,7 +233,7 @@ your browser and take a look at the result. Within a few seconds you should
 start to see a flicker of pages that will randomly bounce across each of your
 instances.
 
-For the demo, a javascript function is set to fire when the page loads
+    For the demo, a javascript function is set to fire when the page loads
 that pauses for a half-second, and then reloads itself. Since we installed
 a modified Apache configuraiton file to disable client-side caching *and* we
 enabled Apache's `mod_headers`, each "reload" results in a new HTTP request
