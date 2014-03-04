@@ -5,7 +5,7 @@ Compute Engine**, one of the topics covered in the
 *video-shorts series* [TODO: link].
 
 The goal of this repository is to provide the extra detail necessary for
-you to completely replicate the recorded demo. The video main goal
+you to completely replicate the recorded demo. The video's main goal
 is to show a quick, fully working demo without bogging you down with all
 of the required details so you can easily see the "Good Stuff".
 
@@ -45,14 +45,21 @@ as instructed.
 
 ## Create the Salt Master Compute Engine instance
 
-Create the Salt master either with the `gcutil` command-line utility (part
-of the Cloud SDK) or in the [Developers Console](https://cloud.google.com/console)
-If you name your instance `salt`, your Compute Engine instance minions will
-naturally resolve the short hostname.
+Next you will create a Virtual Machine for your Salt Master named `salt` so
+that your managed nodes (or minions) will be able to automatcially find the
+master.
+
+You can create the master in the
+[Developers Console](https://cloud.google.com/console)  under the
+*Compute Engine -&gt; VM Instances* section and then click the *NEW INSTANCE*
+button.
+
+Or, you can create the Salt master either with the `gcutil` command-line
+utility (part of the Cloud SDK) with the following command:
 
 ```
 # Make sure to use a Debian-7-wheezy image for this demo
-gcutil addinstance salt
+gcutil addinstance salt --image=debian-7 --zone=us-central1-b --machine_type=n1-standard-1
 ```
 
 ## Software
@@ -86,14 +93,14 @@ gcutil addinstance salt
 
 1. Create a Compute Engine SSH key and upload it to the metadata server.
 The easist way to do this is to use the gcutil command-line utility and
-try to SSH into the local instance.  Since you are using the root account,
-you need an additional flag.
+try to SSH from the machine back into itself.  Since you are using the root
+account, you need an additional flag.
 
     Cut/paste the generated URL into a browser that is authenticated with your
 Google account. Accept the OAuth permissions and cut/paste the verification
 code into your terminal.
 
-    When prompted, used an Empty Passphrase for the demo. Once logged in through
+    When prompted, use an Empty Passphrase for the demo. Once logged in through
 this gcutil ssh command, go ahead and log back out. The full output will look
 similar to,
     ```
@@ -123,7 +130,7 @@ similar to,
     permitted by applicable law.
     root@salt:~# exit
     logout
-    Connection to 162.222.180.195 closed.
+    Connection to 123.48.67.89 closed.
     WARNING: There is a new version of gcutil available. Go to: https://developers.google.com/compute/docs/gcutil
     WARNING: Your version of gcutil is 1.12.0, the latest version is 1.13.0.
     root@salt:~# 
@@ -145,10 +152,10 @@ utility,
     openssl pkcs12 -in /path/to/original/key.p12 -passin pass:notasecret -nodes -nocerts | openssl rsa -out /etc/salt/pkey.pem
     ```
 
-1. Edit the `/etc/salt/cloud` file and specify your `project` and
-`service_account_email_address`. Note that if you used an alternate location
-for your converted Service Account key, make sure to also adjust the
-`service_account_private_key` variable.
+1. Edit the `/etc/salt/cloud` file and specify set your Project ID in the
+`project` parameter and also set your `service_account_email_address`. Note
+that if you used an alternate location for your converted Service Account key,
+make sure to also adjust the `service_account_private_key` variable.
 
 1. Now that `salt-cloud` is configured, you'll need to copy over the demo
 state files that configure each minion.
