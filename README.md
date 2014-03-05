@@ -300,7 +300,9 @@ salt-cloud -f delete_lb gce name=lb
 
 ## Troubleshooting
 
-Strange Make sure you have the latest libcloud and `gce.py` provider installed.
+* Make sure you have the latest libcloud (the `pip` install is probably best) and
+  [`gce.py`](https://github.com/saltstack/salt/blob/develop/salt/cloud/clouds/gce.py)
+  provider installed.
 
 * Minions not updating: In some rare cases, the bootstrapped minions may not
   come up in a clean state. You can usually verify this if you try the ping
