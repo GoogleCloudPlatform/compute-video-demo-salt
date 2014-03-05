@@ -1,4 +1,4 @@
-# compute-video-demo-salt
+## compute-video-demo-salt
 
 This is the supporting documentation for **Using SaltStack with Google
 Compute Engine**, one of the topics covered in the
@@ -11,8 +11,6 @@ of the required details so you can easily see the "Good Stuff".
 
 So for interested viewers wanting to replicate the demo on their own, this
 repository contains all those necessary details.
-
-# Prerequisites
 
 ## Google Cloud Platform Project
 
@@ -138,11 +136,18 @@ similar to,
 
 ## Salt-Cloud setup
 
+1. Check out this repositroy so that you can use pre-canned configuration
+and demo files.
+    ```
+    cd $HOME
+    git clone https://github.com/GoogleCloudPlatform/compute-video-demo-salt
+    ```
+
 1. The `salt-cloud` utility has its own set of configuration files. This repo
 contains the sample configuration files needed for the demo, but you will need
 to customize them with your credentials.
     ```
-    cp -R REPO_DIR/etc/* /etc
+    cp -R ~/compute-video-demo-salt/etc/* /etc
     ```
 
 1. You will need to convert the Service Account private key file from the
@@ -160,7 +165,7 @@ make sure to also adjust the `service_account_private_key` variable.
 1. Now that `salt-cloud` is configured, you'll need to copy over the demo
 state files that configure each minion.
     ```
-    cp -R REPO_DIR/srv/* /srv
+    cp -R ~/compute-video-demo-salt/srv/* /srv
     ```
 
 # Demo time!
@@ -182,11 +187,36 @@ simultaneously.
 salt-cloud -P -y -m /etc/salt/demo.map --out=pprint
 ```
 
+## A quick test and demo of remote execution
+
+Now that the minions have been created and bootstrapped. You can make sure
+that everything was set up correctly by using Salt's remote execution
+framework.  Try the following to execute a command on each instance and
+see the resulting output,
+
+```
+salt '*' cmd.run "uname -a"
+```
+
+You should see something very similar to,
+
+```
+myinstance1:
+    Linux myinstance1 3.2.0-4-amd64 #1 SMP Debian 3.2.51-1 x86_64 GNU/Linux
+myinstance2:
+    Linux myinstance2 3.2.0-4-amd64 #1 SMP Debian 3.2.51-1 x86_64 GNU/Linux
+myinstance4:
+    Linux myinstance4 3.2.0-4-amd64 #1 SMP Debian 3.2.51-1 x86_64 GNU/Linux
+myinstance3:
+    Linux myinstance3 3.2.0-4-amd64 #1 SMP Debian 3.2.51-1 x86_64 GNU/Linux
+```
+
 ## Minion configuration
 
-You can update your minions with the demo state files to install Apache,
-enable `mod_headers`, and set a custom landing page for the site by running
-triggering `highstate`. This should take around 15-20 seconds to complete.
+Ok, now that you have your minions up and running, you can proceed with the
+demo and use the state files to install Apache, enable `mod_headers`, and set
+a custom landing page for the site by running triggering `highstate`. This
+should take around 15-20 seconds to complete.
 
 ```
 salt '*' state.highstate
@@ -267,6 +297,26 @@ salt-cloud -d -m /etc/salt/demo.map
 salt-cloud -f delete_fwrule gce name=allow-http
 salt-cloud -f delete_lb gce name=lb
 ```
+
+## Troubleshooting
+
+Strange Make sure you have the latest libcloud and `gce.py` provider installed.
+
+* Minions not updating: In some rare cases, the bootstrapped minions may not
+  come up in a clean state. You can usually verify this if you try the ping
+  test and see missing or extra minions (e.g. `salt '*' test.ping`). If this
+  happens, the easiest thing to do is to fully restart the salt-minion service
+  on each node. You can use a shell script like this to ensure that all
+  salt-minion process are fully terminated and restarted cleanly,
+
+    ```
+    for m in myinstance{1..4}
+    do
+        gcutil ssh --permit_root_ssh $m /etc/init.d/salt-minion stop
+        gcutil ssh --permit_root_ssh $m pkill salt-minion
+        gcutil ssh --permit_root_ssh $m /etc/init.d/salt-minion start
+    done
+    ```
 
 ## Contributing
 
