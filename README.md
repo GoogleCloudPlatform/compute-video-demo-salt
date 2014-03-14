@@ -16,7 +16,7 @@ repository contains all those necessary details.
 
 1. You will need to create a Google Cloud Platform Project as a first step.
 Make sure you are logged in to your Google Account (gmail, Google+, etc) and
-point your browser to https://cloud.google.com/console.  You should see a
+point your browser to https://console.developers.google.com/. You should see a
 page asking you to create your first Project.
 
 1. When creating a Project, you will see a pop-up dialog box. You can specify
@@ -48,7 +48,7 @@ that your managed nodes (or minions) will be able to automatcially find the
 master.
 
 You can create the master in the
-[Developers Console](https://cloud.google.com/console)  under the
+[Developers Console](https://console.developers.google.com/)  under the
 *Compute Engine -&gt; VM Instances* section and then click the *NEW INSTANCE*
 button.
 
@@ -286,7 +286,7 @@ instructions and sample commands.
 
 When you're done with the demo, make sure to tear down all of your
 instances and clean-up. You will get charged for this usage and you will
-accumulate additional charges if you leave do not remove these resources.
+accumulate additional charges if you do not remove these resources.
 
 Fortunately, `salt-cloud` also provides commands for destroying Compute
 Engine resources. The following commands can be used to destroy all of the
@@ -309,7 +309,7 @@ salt-cloud -f delete_lb gce name=lb
   test and see missing or extra minions (e.g. `salt '*' test.ping`). If this
   happens, the easiest thing to do is to fully restart the salt-minion service
   on each node. You can use a shell script like this to ensure that all
-  salt-minion process are fully terminated and restarted cleanly,
+  salt-minion processes are fully terminated and restarted cleanly,
 
     ```
     for m in myinstance{1..4}
