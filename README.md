@@ -9,8 +9,18 @@ you to completely replicate the recorded demo. The video's main goal
 is to show a quick, fully working demo without bogging you down with all
 of the required details so you can easily see the "Good Stuff".
 
-So for interested viewers wanting to replicate the demo on their own, this
-repository contains all those necessary details.
+At the end of the demo, you will have used SaltStack to automate:
+* Creating 4 Compute Engine instances
+* Install the Apache web server on each
+* Enable Apache's `mod_headers` module
+* Use a SaltStack `grain` and jinja2 template to create a custom site page
+* Allow HTTP traffic to the instances with a custom firewall rule
+* Create a Compute Engine Load-balancer to distribute traffic over the 4 instances
+* Do a live test of the full configuration
+
+This is intended to be a fairly trival example. The video and repo show off
+the integration between SalStack and Google Compute Engine.  And, this can be
+the foundational tools for building more real-world configurations.
 
 ## Google Cloud Platform Project
 
