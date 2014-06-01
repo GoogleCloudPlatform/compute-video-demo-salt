@@ -30,12 +30,13 @@ before you can create any virtual machines with Compute Engine. Look for the
 1. In order for `salt-cloud` to create Compute Engine instances, you'll need a
 [Service Account](https://developers.google.com/console/help/#service_accounts)
 created for the appropriate authorization. Navigate to
-*APIs &amp; auth -&gt; Credentials* and then *Create New Client ID*. Make sure
-to select *Service Account*. Google will generate a new private key and prompt
-you to save the file and let you know that it was created with the *notasecret*
-passphrase. Once you save the key file, make sure to record the
-*Email address* that ends with `@developer.gserviceaccount.com` since this
-will be required in the Salt configuration files.
+*APIs &amp; auth -&gt; Credentials* and under the OAuth section,
+*Create New Client ID*. Make sure to select *Service Account*. Google will
+generate a new private key and prompt you to save the file and let you know
+that it was created with the *notasecret* passphrase. Once you save the key
+file, make sure to record the *Email address* that ends with
+`@developer.gserviceaccount.com` since this will be required in the Salt
+configuration files.
 
 1. Next you will want to install the [Cloud SDK](https://developers.google.com/cloud/sdk/)
 and make sure you've successfully authenticated and set your default project
@@ -79,13 +80,14 @@ gcutil addinstance salt --image=debian-7 --zone=us-central1-b --machine_type=n1-
     pip install apache-libcloud
     ```
 
-1. Install salt (Hydrogen, v2014.1.0)
+1. Install salt (v2014.1.4 or greater)
     ```
     curl -o salt_install.sh -L http://bootstrap.saltstack.org
-    sh salt_install.sh -M -N git v2014.1.0
+    sh salt_install.sh -M -N git v2014.1.4
 
-    # sigh... gce is broken in 2014.1.0
-    wget https://raw.github.com/saltstack/salt/develop/salt/cloud/clouds/gce.py
+    # v2014.1.4 is missing some GCE capabilities so let's copy a version
+    # from 'develop' known to work with v2014.1.4 and replace the module
+    wget https://github.com/saltstack/salt/raw/d99e639411d85fd26f3f120b3266106d61026ea4/salt/cloud/clouds/gce.py
     cp gce.py /usr/lib/python2.7/dist-packages/salt/cloud/clouds/gce.py
     ```
 
@@ -184,7 +186,7 @@ specifying the parallel-mode (`-P`) to create all of the minions
 simultaneously.
 
 ```
-salt-cloud -P -y -m /etc/salt/demo.map --out=pprint
+salt-cloud -P -y -m /etc/salt/demo.map
 ```
 
 ## A quick test and demo of remote execution
@@ -238,7 +240,7 @@ specifying the privider (`gce` in this case). Next, you are providing the
 minimum required parameters to create the rule. This command should take around
 5-10 seconds to complete.
     ```
-    salt-cloud -f create_fwrule gce name=allow-http network=default allow=tcp:80 --out=pprint
+    salt-cloud -f create_fwrule gce name=allow-http network=default allow=tcp:80
     ```
 
 1. Now, if you like, you can put the public IP address of one of your instances
@@ -255,7 +257,7 @@ you specify the correct `region` where your instances reside (this is likely
 `us-central1` if you've used all of the default files in this repository.
 This command should take around 10-15 seconds to complete.
     ```
-    salt-cloud -f create_lb gce name=lb region=us-central1 ports=80 members=myinstance1,myinstance2,myinstance3,myinstance4 --out=pprint
+    salt-cloud -f create_lb gce name=lb region=us-central1 ports=80 members=myinstance1,myinstance2,myinstance3,myinstance4
     ```
 
 1. The output from this command will display the public IP address associated
