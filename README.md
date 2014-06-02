@@ -2,7 +2,7 @@
 
 This is the supporting documentation for **Using SaltStack with Google
 Compute Engine**, one of the topics covered in the
-*video-shorts series* [TODO: link].
+*video-shorts series*, https://www.youtube.com/watch?v=0dOXbhenFl0
 
 The goal of this repository is to provide the extra detail necessary for
 you to completely replicate the recorded demo. The video's main goal
