@@ -148,7 +148,7 @@ similar to,
 
 ## Salt-Cloud setup
 
-1. Check out this repositroy so that you can use pre-canned configuration
+1. Check out this repository so that you can use pre-canned configuration
 and demo files.
     ```
     cd $HOME
