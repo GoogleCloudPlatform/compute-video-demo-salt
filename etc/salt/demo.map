@@ -1,6 +1,6 @@
 zone1a:
-  - myinstance1
-  - myinstance3
+  - minion-1
+  - minion-3
 zone1b:
-  - myinstance2
-  - myinstance4
+  - minion-2
+  - minion-4

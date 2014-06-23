@@ -49,7 +49,7 @@
   </style>
   <!--
   NOTE: When deploying this page, the title-tag must by set to one of
-  myinstance1, myinstance2, myinstance3, or myinstance4 and _should_ match
+  minion-1, minion-2, minion-3, or minion-4 and _should_ match
   the short hostname of it's GCE instance. The page's background color will
   be updated onload based on it's hostname via javascript code below.
   -->
@@ -57,13 +57,13 @@
   <script type="text/javascript">
     // change background color depending on title and reload
     function changeBgColor() {
-      if (document.title == 'myinstance1') {
+      if (document.title == 'minion-1') {
         document.body.style.backgroundColor = "#4285F4"; // blue
-      } else if (document.title == 'myinstance2') {
+      } else if (document.title == 'minion-2') {
         document.body.style.backgroundColor = "#D84437"; // red
-      } else if (document.title == 'myinstance3') {
+      } else if (document.title == 'minion-3') {
         document.body.style.backgroundColor = "#F4B400"; // yellow
-      } else if (document.title == 'myinstance4') {
+      } else if (document.title == 'minion-4') {
         document.body.style.backgroundColor = "#0F9D58"; // green
       } else {
         document.body.style.backgroundColor = "grey";

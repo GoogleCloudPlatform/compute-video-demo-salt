@@ -1,0 +1,2346 @@
+Script started on Mon Jun 23 16:19:46 2014
+$ # This screencast demonstrates how you can use SaltStack and Google Compute
+$ # Engine. Everything you need to repeat this demo can be found at,
+$ # https://github.com/GoogleCloudPlatform/compute-video-demo-salt
+$ 
+$ # We'll use SaltStack's 'salt-cloud' utility to create 4 virtual mahc  chines,
+$ # a load-balancer, and open up a firewall rule for HTTP traffice. The new
+$ # VMs will be bootstrapped into our Salt environment t and we'll also install
+$ # Apache a on each along with a custom site page.
+$ 
+$ # We assume you have already set up your Google Cloud Platform f project,
+$ # installed a salt master and set up the required authorization files as  
+$ # instructed in the demo repo's README.
+$ 
+$ # This screencast pics up at th e"   e "Demo time!" section of the README. As such,
+$ # we are now logged into our configured salt master and are ready to
+$ # proceed.   Note that if your salt master's short hostname is *not* 'salt',
+$ # Y you will need to edit the /etc/salt/cloud.profiles file a to set the
+$ # correct name of your salt master.
+$ 
+$ # Note that you will need to be the r'  'root' user for the demo.
+$ sudo -i
+# 
+# We can make sure we have no existing minions by lookat at the          king at the list of
+-bash: We: command not found
+# # authorized keys,
+# salt-key -l L
+[1;32mAccepted Keys:[0m
+[1;31mUnaccepted Keys:[0m
+[1;34mRejected Keys:[0m
+# 
+# # Now create all 4 VMs in parallel,
+# salt-cloud -P -m /etc/salt/demo.map 
+[INFO    ] salt-cloud starting
+[INFO    ] Applying map from '/etc/salt/demo.map'.
+The following virtual machines are set to be created:
+  minion-4
+  minion-1
+  minion-3
+  minion-2
+
+Proceed? [N/y] y
+... proceeding
+[INFO    ] Calculating dependencies for minion-4
+[INFO    ] Calculating dependencies for minion-1
+[INFO    ] Calculating dependencies for minion-3
+[INFO    ] Calculating dependencies for minion-2
+[INFO    ] Since parallel deployment is in use, ssh console output is disabled. All ssh output will be logged though
+[INFO    ] Cloud pool size: 4
+[INFO    ] Creating GCE instance minion-1 in us-central1-a
+[INFO    ] Creating GCE instance minion-3 in us-central1-a
+[INFO    ] Creating GCE instance minion-2 in us-central1-b
+[INFO    ] Creating GCE instance minion-4 in us-central1-b
+[INFO    ] Rendering deploy script: /usr/lib/python2.7/dist-packages/salt/cloud/deploy/bootstrap-salt.sh
+[INFO    ] Rendering deploy script: /usr/lib/python2.7/dist-packages/salt/cloud/deploy/bootstrap-salt.sh
+[INFO    ] Rendering deploy script: /usr/lib/python2.7/dist-packages/salt/cloud/deploy/bootstrap-salt.sh
+[INFO    ] Rendering deploy script: /usr/lib/python2.7/dist-packages/salt/cloud/deploy/bootstrap-salt.sh
+[INFO    ] Salt installed on minion-3
+[INFO    ] Salt installed on minion-1
+[INFO    ] Created Cloud VM 'minion-3'
+[INFO    ] Created Cloud VM 'minion-1'
+[INFO    ] Salt installed on minion-2
+[INFO    ] Salt installed on minion-4
+[INFO    ] Created Cloud VM 'minion-2'
+[INFO    ] Created Cloud VM 'minion-4'
+[0;36mminion-1[0m:
+    [0;36m----------[0m
+    [0;36m_uuid[0m:
+        [1;33mNone[0m
+    [0;36mdriver[0m:
+        [0;32m<libcloud.compute.drivers.gce.GCENodeDriver object at 0x3263a50>[0m
+    [0;36mextra[0m:
+        [0;36m----------[0m
+        [0;36mdescription[0m:
+            [1;33mNone[0m
+        [0;36mdisks[0m:
+            [0;36m----------[0m
+            [0;36m- autoDelete[0m:
+                [1;33mFalse[0m
+            [0;36m- boot[0m:
+                [1;33mTrue[0m
+            [0;36m- deviceName[0m:
+                [0;32mminion-1[0m
+            [0;36m- index[0m:
+                [1;33m0[0m
+            [0;36m- kind[0m:
+                [0;32mcompute#attachedDisk[0m
+            [0;36m- mode[0m:
+                [0;32mREAD_WRITE[0m
+            [0;36m- source[0m:
+                [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/zones/us-central1-a/disks/minion-1[0m
+            [0;36m- type[0m:
+                [0;32mPERSISTENT[0m
+        [0;36mid[0m:
+            [0;32m10312010346143778199[0m
+        [0;36mimage[0m:
+            [1;33mNone[0m
+        [0;36mmachineType[0m:
+            [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/zones/us-central1-a/machineTypes/n1-standard-1[0m
+        [0;36mmetadata[0m:
+            [0;36m----------[0m
+            [0;36mfingerprint[0m:
+                [0;32mAPVoohVy7Gw=[0m
+            [0;36mitems[0m:
+                [0;36m----------[0m
+                [0;36m- key[0m:
+                    [0;32msalt-cloud-profile[0m
+                [0;36m- value[0m:
+                    [0;32mzone1a[0m
+            [0;36mkind[0m:
+                [0;32mcompute#metadata[0m
+        [0;36mname[0m:
+            [0;32mminion-1[0m
+        [0;36mnetworkInterfaces[0m:
+            [0;36m----------[0m
+            [0;36m- accessConfigs[0m:
+                [0;36m----------[0m
+                [0;36m- kind[0m:
+                    [0;32mcompute#accessConfig[0m
+                [0;36m- name[0m:
+                    [0;32mExternal NAT[0m
+                [0;36m- natIP[0m:
+                    [0;32m23.236.55.137[0m
+                [0;36m- type[0m:
+                    [0;32mONE_TO_ONE_NAT[0m
+            [0;36m- name[0m:
+                [0;32mnic0[0m
+            [0;36m- network[0m:
+                [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/global/networks/default[0m
+            [0;36m- networkIP[0m:
+                [0;32m10.240.68.189[0m
+        [0;36mscheduling[0m:
+            [0;36m----------[0m
+            [0;36mautomaticRestart[0m:
+                [1;33mTrue[0m
+            [0;36monHostMaintenance[0m:
+                [0;32mMIGRATE[0m
+        [0;36mselfLink[0m:
+            [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/zones/us-central1-a/instances/minion-1[0m
+        [0;36mstatus[0m:
+            [0;32mRUNNING[0m
+        [0;36mtags[0m:
+            [0;32m- minion[0m
+            [0;32m- salt[0m
+            [0;32m- zone1a[0m
+        [0;36mtags_fingerprint[0m:
+            [0;32mRudqyOSZymk=[0m
+        [0;36mzone[0m:
+            [0;36m----------[0m
+            [0;36mcountry[0m:
+                [0;32mus[0m
+            [0;36mdeprecated[0m:
+                [1;33mNone[0m
+            [0;36mdriver[0m:
+                [0;32m<libcloud.compute.drivers.gce.GCENodeDriver object at 0x3263a50>[0m
+            [0;36mextra[0m:
+                [0;36m----------[0m
+                [0;36mcreationTimestamp[0m:
+                    [0;32m2014-01-21T10:30:55.288-08:00[0m
+                [0;36mdescription[0m:
+                    [0;32mus-central1-a[0m
+                [0;36mselfLink[0m:
+                    [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/zones/us-central1-a[0m
+            [0;36mid[0m:
+                [0;32m8033219919959725955[0m
+            [0;36mmaintenance_windows[0m:
+                [1;33mNone[0m
+            [0;36mname[0m:
+                [0;32mus-central1-a[0m
+            [0;36mstatus[0m:
+                [0;32mUP[0m
+    [0;36mid[0m:
+        [0;32m10312010346143778199[0m
+    [0;36mimage[0m:
+        [1;33mNone[0m
+    [0;36mname[0m:
+        [0;32mminion-1[0m
+    [0;36mprivate_ips[0m:
+        [0;32m- 10.240.68.189[0m
+    [0;36mpublic_ips[0m:
+        [0;32m- 23.236.55.137[0m
+    [0;36msize[0m:
+        [0;32mn1-standard-1[0m
+    [0;36mstate[0m:
+        [1;33m0[0m
+[0;36mminion-2[0m:
+    [0;36m----------[0m
+    [0;36m_uuid[0m:
+        [1;33mNone[0m
+    [0;36mdriver[0m:
+        [0;32m<libcloud.compute.drivers.gce.GCENodeDriver object at 0x3263a50>[0m
+    [0;36mextra[0m:
+        [0;36m----------[0m
+        [0;36mdescription[0m:
+            [1;33mNone[0m
+        [0;36mdisks[0m:
+            [0;36m----------[0m
+            [0;36m- autoDelete[0m:
+                [1;33mFalse[0m
+            [0;36m- boot[0m:
+                [1;33mTrue[0m
+            [0;36m- deviceName[0m:
+                [0;32mminion-2[0m
+            [0;36m- index[0m:
+                [1;33m0[0m
+            [0;36m- kind[0m:
+                [0;32mcompute#attachedDisk[0m
+            [0;36m- mode[0m:
+                [0;32mREAD_WRITE[0m
+            [0;36m- source[0m:
+                [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/zones/us-central1-b/disks/minion-2[0m
+            [0;36m- type[0m:
+                [0;32mPERSISTENT[0m
+        [0;36mid[0m:
+            [0;32m106933875486647523[0m
+        [0;36mimage[0m:
+            [1;33mNone[0m
+        [0;36mmachineType[0m:
+            [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/zones/us-central1-b/machineTypes/n1-standard-1[0m
+        [0;36mmetadata[0m:
+            [0;36m----------[0m
+            [0;36mfingerprint[0m:
+                [0;32mhJbq1ExwxNc=[0m
+            [0;36mitems[0m:
+                [0;36m----------[0m
+                [0;36m- key[0m:
+                    [0;32msalt-cloud-profile[0m
+                [0;36m- value[0m:
+                    [0;32mzone1b[0m
+            [0;36mkind[0m:
+                [0;32mcompute#metadata[0m
+        [0;36mname[0m:
+            [0;32mminion-2[0m
+        [0;36mnetworkInterfaces[0m:
+            [0;36m----------[0m
+            [0;36m- accessConfigs[0m:
+                [0;36m----------[0m
+                [0;36m- kind[0m:
+                    [0;32mcompute#accessConfig[0m
+                [0;36m- name[0m:
+                    [0;32mExternal NAT[0m
+                [0;36m- natIP[0m:
+                    [0;32m23.236.51.204[0m
+                [0;36m- type[0m:
+                    [0;32mONE_TO_ONE_NAT[0m
+            [0;36m- name[0m:
+                [0;32mnic0[0m
+            [0;36m- network[0m:
+                [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/global/networks/default[0m
+            [0;36m- networkIP[0m:
+                [0;32m10.240.103.192[0m
+        [0;36mscheduling[0m:
+            [0;36m----------[0m
+            [0;36mautomaticRestart[0m:
+                [1;33mTrue[0m
+            [0;36monHostMaintenance[0m:
+                [0;32mMIGRATE[0m
+        [0;36mselfLink[0m:
+            [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/zones/us-central1-b/instances/minion-2[0m
+        [0;36mstatus[0m:
+            [0;32mRUNNING[0m
+        [0;36mtags[0m:
+            [0;32m- minion[0m
+            [0;32m- salt[0m
+            [0;32m- zone1b[0m
+        [0;36mtags_fingerprint[0m:
+            [0;32m_A6oSxinpqg=[0m
+        [0;36mzone[0m:
+            [0;36m----------[0m
+            [0;36mcountry[0m:
+                [0;32mus[0m
+            [0;36mdeprecated[0m:
+                [1;33mNone[0m
+            [0;36mdriver[0m:
+                [0;32m<libcloud.compute.drivers.gce.GCENodeDriver object at 0x3263a50>[0m
+            [0;36mextra[0m:
+                [0;36m----------[0m
+                [0;36mcreationTimestamp[0m:
+                    [0;32m2014-01-21T10:30:55.290-08:00[0m
+                [0;36mdescription[0m:
+                    [0;32mus-central1-b[0m
+                [0;36mselfLink[0m:
+                    [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/zones/us-central1-b[0m
+            [0;36mid[0m:
+                [0;32m2264435561806081494[0m
+            [0;36mmaintenance_windows[0m:
+                [1;33mNone[0m
+            [0;36mname[0m:
+                [0;32mus-central1-b[0m
+            [0;36mstatus[0m:
+                [0;32mUP[0m
+    [0;36mid[0m:
+        [0;32m106933875486647523[0m
+    [0;36mimage[0m:
+        [1;33mNone[0m
+    [0;36mname[0m:
+        [0;32mminion-2[0m
+    [0;36mprivate_ips[0m:
+        [0;32m- 10.240.103.192[0m
+    [0;36mpublic_ips[0m:
+        [0;32m- 23.236.51.204[0m
+    [0;36msize[0m:
+        [0;32mn1-standard-1[0m
+    [0;36mstate[0m:
+        [1;33m0[0m
+[0;36mminion-3[0m:
+    [0;36m----------[0m
+    [0;36m_uuid[0m:
+        [1;33mNone[0m
+    [0;36mdriver[0m:
+        [0;32m<libcloud.compute.drivers.gce.GCENodeDriver object at 0x3263a50>[0m
+    [0;36mextra[0m:
+        [0;36m----------[0m
+        [0;36mdescription[0m:
+            [1;33mNone[0m
+        [0;36mdisks[0m:
+            [0;36m----------[0m
+            [0;36m- autoDelete[0m:
+                [1;33mFalse[0m
+            [0;36m- boot[0m:
+                [1;33mTrue[0m
+            [0;36m- deviceName[0m:
+                [0;32mminion-3[0m
+            [0;36m- index[0m:
+                [1;33m0[0m
+            [0;36m- kind[0m:
+                [0;32mcompute#attachedDisk[0m
+            [0;36m- mode[0m:
+                [0;32mREAD_WRITE[0m
+            [0;36m- source[0m:
+                [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/zones/us-central1-a/disks/minion-3[0m
+            [0;36m- type[0m:
+                [0;32mPERSISTENT[0m
+        [0;36mid[0m:
+            [0;32m15923968505409770155[0m
+        [0;36mimage[0m:
+            [1;33mNone[0m
+        [0;36mmachineType[0m:
+            [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/zones/us-central1-a/machineTypes/n1-standard-1[0m
+        [0;36mmetadata[0m:
+            [0;36m----------[0m
+            [0;36mfingerprint[0m:
+                [0;32mAPVoohVy7Gw=[0m
+            [0;36mitems[0m:
+                [0;36m----------[0m
+                [0;36m- key[0m:
+                    [0;32msalt-cloud-profile[0m
+                [0;36m- value[0m:
+                    [0;32mzone1a[0m
+            [0;36mkind[0m:
+                [0;32mcompute#metadata[0m
+        [0;36mname[0m:
+            [0;32mminion-3[0m
+        [0;36mnetworkInterfaces[0m:
+            [0;36m----------[0m
+            [0;36m- accessConfigs[0m:
+                [0;36m----------[0m
+                [0;36m- kind[0m:
+                    [0;32mcompute#accessConfig[0m
+                [0;36m- name[0m:
+                    [0;32mExternal NAT[0m
+                [0;36m- natIP[0m:
+                    [0;32m23.236.49.193[0m
+                [0;36m- type[0m:
+                    [0;32mONE_TO_ONE_NAT[0m
+            [0;36m- name[0m:
+                [0;32mnic0[0m
+            [0;36m- network[0m:
+                [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/global/networks/default[0m
+            [0;36m- networkIP[0m:
+                [0;32m10.240.62.98[0m
+        [0;36mscheduling[0m:
+            [0;36m----------[0m
+            [0;36mautomaticRestart[0m:
+                [1;33mTrue[0m
+            [0;36monHostMaintenance[0m:
+                [0;32mMIGRATE[0m
+        [0;36mselfLink[0m:
+            [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/zones/us-central1-a/instances/minion-3[0m
+        [0;36mstatus[0m:
+            [0;32mRUNNING[0m
+        [0;36mtags[0m:
+            [0;32m- minion[0m
+            [0;32m- salt[0m
+            [0;32m- zone1a[0m
+        [0;36mtags_fingerprint[0m:
+            [0;32mRudqyOSZymk=[0m
+        [0;36mzone[0m:
+            [0;36m----------[0m
+            [0;36mcountry[0m:
+                [0;32mus[0m
+            [0;36mdeprecated[0m:
+                [1;33mNone[0m
+            [0;36mdriver[0m:
+                [0;32m<libcloud.compute.drivers.gce.GCENodeDriver object at 0x3263a50>[0m
+            [0;36mextra[0m:
+                [0;36m----------[0m
+                [0;36mcreationTimestamp[0m:
+                    [0;32m2014-01-21T10:30:55.288-08:00[0m
+                [0;36mdescription[0m:
+                    [0;32mus-central1-a[0m
+                [0;36mselfLink[0m:
+                    [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/zones/us-central1-a[0m
+            [0;36mid[0m:
+                [0;32m8033219919959725955[0m
+            [0;36mmaintenance_windows[0m:
+                [1;33mNone[0m
+            [0;36mname[0m:
+                [0;32mus-central1-a[0m
+            [0;36mstatus[0m:
+                [0;32mUP[0m
+    [0;36mid[0m:
+        [0;32m15923968505409770155[0m
+    [0;36mimage[0m:
+        [1;33mNone[0m
+    [0;36mname[0m:
+        [0;32mminion-3[0m
+    [0;36mprivate_ips[0m:
+        [0;32m- 10.240.62.98[0m
+    [0;36mpublic_ips[0m:
+        [0;32m- 23.236.49.193[0m
+    [0;36msize[0m:
+        [0;32mn1-standard-1[0m
+    [0;36mstate[0m:
+        [1;33m0[0m
+[0;36mminion-4[0m:
+    [0;36m----------[0m
+    [0;36m_uuid[0m:
+        [1;33mNone[0m
+    [0;36mdriver[0m:
+        [0;32m<libcloud.compute.drivers.gce.GCENodeDriver object at 0x3263a50>[0m
+    [0;36mextra[0m:
+        [0;36m----------[0m
+        [0;36mdescription[0m:
+            [1;33mNone[0m
+        [0;36mdisks[0m:
+            [0;36m----------[0m
+            [0;36m- autoDelete[0m:
+                [1;33mFalse[0m
+            [0;36m- boot[0m:
+                [1;33mTrue[0m
+            [0;36m- deviceName[0m:
+                [0;32mminion-4[0m
+            [0;36m- index[0m:
+                [1;33m0[0m
+            [0;36m- kind[0m:
+                [0;32mcompute#attachedDisk[0m
+            [0;36m- mode[0m:
+                [0;32mREAD_WRITE[0m
+            [0;36m- source[0m:
+                [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/zones/us-central1-b/disks/minion-4[0m
+            [0;36m- type[0m:
+                [0;32mPERSISTENT[0m
+        [0;36mid[0m:
+            [0;32m8670746928536279379[0m
+        [0;36mimage[0m:
+            [1;33mNone[0m
+        [0;36mmachineType[0m:
+            [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/zones/us-central1-b/machineTypes/n1-standard-1[0m
+        [0;36mmetadata[0m:
+            [0;36m----------[0m
+            [0;36mfingerprint[0m:
+                [0;32mhJbq1ExwxNc=[0m
+            [0;36mitems[0m:
+                [0;36m----------[0m
+                [0;36m- key[0m:
+                    [0;32msalt-cloud-profile[0m
+                [0;36m- value[0m:
+                    [0;32mzone1b[0m
+            [0;36mkind[0m:
+                [0;32mcompute#metadata[0m
+        [0;36mname[0m:
+            [0;32mminion-4[0m
+        [0;36mnetworkInterfaces[0m:
+            [0;36m----------[0m
+            [0;36m- accessConfigs[0m:
+                [0;36m----------[0m
+                [0;36m- kind[0m:
+                    [0;32mcompute#accessConfig[0m
+                [0;36m- name[0m:
+                    [0;32mExternal NAT[0m
+                [0;36m- natIP[0m:
+                    [0;32m173.255.115.211[0m
+                [0;36m- type[0m:
+                    [0;32mONE_TO_ONE_NAT[0m
+            [0;36m- name[0m:
+                [0;32mnic0[0m
+            [0;36m- network[0m:
+                [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/global/networks/default[0m
+            [0;36m- networkIP[0m:
+                [0;32m10.240.242.54[0m
+        [0;36mscheduling[0m:
+            [0;36m----------[0m
+            [0;36mautomaticRestart[0m:
+                [1;33mTrue[0m
+            [0;36monHostMaintenance[0m:
+                [0;32mMIGRATE[0m
+        [0;36mselfLink[0m:
+            [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/zones/us-central1-b/instances/minion-4[0m
+        [0;36mstatus[0m:
+            [0;32mRUNNING[0m
+        [0;36mtags[0m:
+            [0;32m- minion[0m
+            [0;32m- salt[0m
+            [0;32m- zone1b[0m
+        [0;36mtags_fingerprint[0m:
+            [0;32m_A6oSxinpqg=[0m
+        [0;36mzone[0m:
+            [0;36m----------[0m
+            [0;36mcountry[0m:
+                [0;32mus[0m
+            [0;36mdeprecated[0m:
+                [1;33mNone[0m
+            [0;36mdriver[0m:
+                [0;32m<libcloud.compute.drivers.gce.GCENodeDriver object at 0x3263a50>[0m
+            [0;36mextra[0m:
+                [0;36m----------[0m
+                [0;36mcreationTimestamp[0m:
+                    [0;32m2014-01-21T10:30:55.290-08:00[0m
+                [0;36mdescription[0m:
+                    [0;32mus-central1-b[0m
+                [0;36mselfLink[0m:
+                    [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/zones/us-central1-b[0m
+            [0;36mid[0m:
+                [0;32m2264435561806081494[0m
+            [0;36mmaintenance_windows[0m:
+                [1;33mNone[0m
+            [0;36mname[0m:
+                [0;32mus-central1-b[0m
+            [0;36mstatus[0m:
+                [0;32mUP[0m
+    [0;36mid[0m:
+        [0;32m8670746928536279379[0m
+    [0;36mimage[0m:
+        [1;33mNone[0m
+    [0;36mname[0m:
+        [0;32mminion-4[0m
+    [0;36mprivate_ips[0m:
+        [0;32m- 10.240.242.54[0m
+    [0;36mpublic_ips[0m:
+        [0;32m- 173.255.115.211[0m
+    [0;36msize[0m:
+        [0;32mn1-standard-1[0m
+    [0;36mstate[0m:
+        [1;33m0[0m
+
+# # We can use Salt's remote execution to make sure all instances are   were created
+# # and bootstrapped as salt minions,m
+# salt '*' cmd.run "uname -a"
+[0;36mminion-2[0m:
+    [0;32mLinux minion-2 3.2.0-4-amd64 #1 SMP Debian 3.2.57-3+deb7u2 x86_64 GNU/Linux[0m
+[0;36mminion-3[0m:
+    [0;32mLinux minion-3 3.2.0-4-amd64 #1 SMP Debian 3.2.57-3+deb7u2 x86_64 GNU/Linux[0m
+[0;36mminion-4[0m:
+    [0;32mLinux minion-4 3.2.0-4-amd64 #1 SMP Debian 3.2.57-3+deb7u2 x86_64 GNU/Linux[0m
+[0;36mminion-1[0m:
+    [0;32mLinux minion-1 3.2.0-4-amd64 #1 SMP Debian 3.2.57-3+deb7u2 x86_64 GNU/Linux[0m
+# 
+# # Now let's use salt's state system to deploy Apache and a custom site
+# # page (using salt's grains) to set the name of the page,
+# salt '*' state.highstate
+[0;32mminion-2:[0m
+[0;36m----------[0m
+    [0;36m      ID: apache2[0m
+    [0;36mFunction: pkg.installed[0m
+    [0;36m  Result: True[0m
+    [0;36m Comment: The following packages were installed/updated: apache2.[0m
+[0;36m     Changes:   
+              [0;36m----------[0;36m
+              [0;36mapache2[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m2.2.22-13+deb7u1[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m
+              [0;36mapache2-mpm-worker[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m2.2.22-13+deb7u1[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m
+              [0;36mapache2-utils[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m2.2.22-13+deb7u1[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m
+              [0;36mapache2.2-bin[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m2.2.22-13+deb7u1[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m
+              [0;36mapache2.2-common[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m2.2.22-13+deb7u1[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m
+              [0;36mlibapr1[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m1.4.6-3+deb7u1[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m
+              [0;36mlibaprutil1[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m1.4.1-3[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m
+              [0;36mlibaprutil1-dbd-sqlite3[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m1.4.1-3[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m
+              [0;36mlibaprutil1-ldap[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m1.4.1-3[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m
+              [0;36mlibpcre3[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m1:8.30-5[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m
+              [0;36mssl-cert[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m1.0.32[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m[0m
+[0;36m----------[0m
+    [0;36m      ID: /etc/apache2/apache2.conf[0m
+    [0;36mFunction: file.managed[0m
+    [0;36m  Result: True[0m
+    [0;36m Comment: File /etc/apache2/apache2.conf updated[0m
+[0;36m     Changes:   
+              [0;36m----------[0;36m
+              [0;36mdiff[0;36m:
+                  [0;36m--- [0;36m
+                  [0;36m+++ [0;36m
+                  [0;36m@@ -104,20 +104,20 @@[0;36m
+                  [0;36m # KeepAlive: Whether or not to allow persistent connections (more than[0;36m
+                  [0;36m # one request per connection). Set to "Off" to deactivate.[0;36m
+                  [0;36m #[0;36m
+                  [0;36m-KeepAlive On[0;36m
+                  [0;36m+KeepAlive Off[0;36m
+                  [0;36m [0;36m
+                  [0;36m #[0;36m
+                  [0;36m # MaxKeepAliveRequests: The maximum number of requests to allow[0;36m
+                  [0;36m # during a persistent connection. Set to 0 to allow an unlimited amount.[0;36m
+                  [0;36m # We recommend you leave this number high, for maximum performance.[0;36m
+                  [0;36m #[0;36m
+                  [0;36m-MaxKeepAliveRequests 100[0;36m
+                  [0;36m+MaxKeepAliveRequests 1[0;36m
+                  [0;36m [0;36m
+                  [0;36m #[0;36m
+                  [0;36m # KeepAliveTimeout: Number of seconds to wait for the next request from the[0;36m
+                  [0;36m # same client on the same connection.[0;36m
+                  [0;36m #[0;36m
+                  [0;36m-KeepAliveTimeout 5[0;36m
+                  [0;36m+KeepAliveTimeout 1[0;36m
+                  [0;36m [0;36m
+                  [0;36m ##[0;36m
+                  [0;36m ## Server-Pool Size Regulation (MPM specific)[0;36m
+                  [0;36m@@ -131,7 +131,7 @@[0;36m
+                  [0;36m # MaxRequestsPerChild: maximum number of requests a server process serves[0;36m
+                  [0;36m <IfModule mpm_prefork_module>[0;36m
+                  [0;36m     StartServers          5[0;36m
+                  [0;36m-    MinSpareServers       5[0;36m
+                  [0;36m+    MinSpareServers      10[0;36m
+                  [0;36m     MaxSpareServers      10[0;36m
+                  [0;36m     MaxClients          150[0;36m
+                  [0;36m     MaxRequestsPerChild   0[0;36m
+                  [0;36m@@ -150,7 +150,7 @@[0;36m
+                  [0;36m <IfModule mpm_worker_module>[0;36m
+                  [0;36m     StartServers          2[0;36m
+                  [0;36m     MinSpareThreads      25[0;36m
+                  [0;36m-    MaxSpareThreads      75 [0;36m
+                  [0;36m+    MaxSpareThreads      75[0;36m
+                  [0;36m     ThreadLimit          64[0;36m
+                  [0;36m     ThreadsPerChild      25[0;36m
+                  [0;36m     MaxClients          150[0;36m
+                  [0;36m@@ -167,7 +167,7 @@[0;36m
+                  [0;36m <IfModule mpm_event_module>[0;36m
+                  [0;36m     StartServers          2[0;36m
+                  [0;36m     MinSpareThreads      25[0;36m
+                  [0;36m-    MaxSpareThreads      75 [0;36m
+                  [0;36m+    MaxSpareThreads      75[0;36m
+                  [0;36m     ThreadLimit          64[0;36m
+                  [0;36m     ThreadsPerChild      25[0;36m
+                  [0;36m     MaxClients          150[0;36m
+                  [0;36m@@ -261,6 +261,17 @@[0;36m
+                  [0;36m # Include of directories ignores editors' and dpkg's backup files,[0;36m
+                  [0;36m # see the comments above for details.[0;36m
+                  [0;36m [0;36m
+                  [0;36m+<FilesMatch "\.(js|css|html)$">[0;36m
+                  [0;36m+FileETag None[0;36m
+                  [0;36m+<ifModule mod_headers.c>[0;36m
+                  [0;36m+Header unset ETag[0;36m
+                  [0;36m+Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"[0;36m
+                  [0;36m+Header set Pragma "no-cache"[0;36m
+                  [0;36m+Header set Expires "Wed, 11 Jan 2010 05:00:00 GMT"[0;36m
+                  [0;36m+</ifModule>[0;36m
+                  [0;36m+</FilesMatch>[0;36m
+                  [0;36m+[0;36m
+                  [0;36m+[0;36m
+                  [0;36m # Include generic snippets of statements[0;36m
+                  [0;36m Include conf.d/[0;36m
+                  [0;36m [0;36m
+                  [0;36m[0;36m[0m
+[0;36m----------[0m
+    [0;36m      ID: /etc/apache2/mods-enabled/headers.load[0m
+    [0;36mFunction: file.symlink[0m
+    [0;36m  Result: True[0m
+    [0;36m Comment: Created new symlink /etc/apache2/mods-enabled/headers.load -> /etc/apache2/mods-available/headers.load[0m
+[0;36m     Changes:   
+              [0;36m----------[0;36m
+              [0;36mnew[0;36m:
+                  [0;36m/etc/apache2/mods-enabled/headers.load[0;36m[0m
+[0;36m----------[0m
+    [0;36m      ID: apache2[0m
+    [0;36mFunction: service.running[0m
+    [0;36m  Result: True[0m
+    [0;36m Comment: Service restarted[0m
+[0;36m     Changes:   
+              [0;36m----------[0;36m
+              [0;36mapache2[0;36m:
+                  [0;36mTrue[0;36m[0m
+[0;36m----------[0m
+    [0;36m      ID: /var/www/index.html[0m
+    [0;36mFunction: file.managed[0m
+    [0;36m  Result: True[0m
+    [0;36m Comment: File /var/www/index.html updated[0m
+[0;36m     Changes:   
+              [0;36m----------[0;36m
+              [0;36mdiff[0;36m:
+                  [0;36m--- [0;36m
+                  [0;36m+++ [0;36m
+                  [0;36m@@ -1,4 +1,85 @@[0;36m
+                  [0;36m-<html><body><h1>It works!</h1>[0;36m
+                  [0;36m-<p>This is the default web page for this server.</p>[0;36m
+                  [0;36m-<p>The web server software is running but no content has been added, yet.</p>[0;36m
+                  [0;36m-</body></html>[0;36m
+                  [0;36m+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">[0;36m
+                  [0;36m+<html xmlns="http://www.w3.org/1999/xhtml">[0;36m
+                  [0;36m+[0;36m
+                  [0;36m+<head>[0;36m
+                  [0;36m+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />[0;36m
+                  [0;36m+  <meta http-equiv="Cache-Control" content="no-cache, no-store" />[0;36m
+                  [0;36m+  <meta http-equiv="Pragma" content="no-cache" />[0;36m
+                  [0;36m+  <meta http-equiv="Expires" content="0" />[0;36m
+                  [0;36m+  <style>[0;36m
+                  [0;36m+    body {[0;36m
+                  [0;36m+      margin: 0;[0;36m
+                  [0;36m+      padding: 0;[0;36m
+                  [0;36m+      background-color: #bbc3cb;[0;36m
+                  [0;36m+      width: 100%;[0;36m
+                  [0;36m+      height: 100%;[0;36m
+                  [0;36m+      font: 14px Tahoma, Verdana, Arial, san-serif;[0;36m
+                  [0;36m+    }[0;36m
+                  [0;36m+[0;36m
+                  [0;36m+    h1 {[0;36m
+                  [0;36m+      font-size: 64px;[0;36m
+                  [0;36m+      margin: 10px;[0;36m
+                  [0;36m+    }[0;36m
+                  [0;36m+[0;36m
+                  [0;36m+    div.frameT {[0;36m
+                  [0;36m+      width: 100%;[0;36m
+                  [0;36m+      padding: 0;[0;36m
+                  [0;36m+      display: table;[0;36m
+                  [0;36m+      height: 100%;[0;36m
+                  [0;36m+      position: absolute;[0;36m
+                  [0;36m+      top: 0;[0;36m
+                  [0;36m+      left: 0;[0;36m
+                  [0;36m+      margin: 0;[0;36m
+                  [0;36m+    }[0;36m
+                  [0;36m+[0;36m
+                  [0;36m+    div.frameTC {[0;36m
+                  [0;36m+      padding: 0;[0;36m
+                  [0;36m+      vertical-align: middle;[0;36m
+                  [0;36m+      display: table-cell;[0;36m
+                  [0;36m+      margin: 0;[0;36m
+                  [0;36m+    }[0;36m
+                  [0;36m+[0;36m
+                  [0;36m+    div.content {[0;36m
+                  [0;36m+      width: 480px;[0;36m
+                  [0;36m+      background-color: #fff;[0;36m
+                  [0;36m+      margin: 0 auto;[0;36m
+                  [0;36m+      text-align: center;[0;36m
+                  [0;36m+      padding: 10px;[0;36m
+                  [0;36m+    }[0;36m
+                  [0;36m+  </style>[0;36m
+                  [0;36m+  <!--[0;36m
+                  [0;36m+  NOTE: When deploying this page, the title-tag must by set to one of[0;36m
+                  [0;36m+  minion-1, minion-2, minion-3, or minion-4 and _should_ match[0;36m
+                  [0;36m+  the short hostname of it's GCE instance. The page's background color will[0;36m
+                  [0;36m+  be updated onload based on it's hostname via javascript code below.[0;36m
+                  [0;36m+  -->[0;36m
+                  [0;36m+  <title>minion-2</title>[0;36m
+                  [0;36m+  <script type="text/javascript">[0;36m
+                  [0;36m+    // change background color depending on title and reload[0;36m
+                  [0;36m+    function changeBgColor() {[0;36m
+                  [0;36m+      if (document.title == 'minion-1') {[0;36m
+                  [0;36m+        document.body.style.backgroundColor = "#4285F4"; // blue[0;36m
+                  [0;36m+      } else if (document.title == 'minion-2') {[0;36m
+                  [0;36m+        document.body.style.backgroundColor = "#D84437"; // red[0;36m
+                  [0;36m+      } else if (document.title == 'minion-3') {[0;36m
+                  [0;36m+        document.body.style.backgroundColor = "#F4B400"; // yellow[0;36m
+                  [0;36m+      } else if (document.title == 'minion-4') {[0;36m
+                  [0;36m+        document.body.style.backgroundColor = "#0F9D58"; // green[0;36m
+                  [0;36m+      } else {[0;36m
+                  [0;36m+        document.body.style.backgroundColor = "grey";[0;36m
+                  [0;36m+        bounce = false;[0;36m
+                  [0;36m+      }[0;36m
+                  [0;36m+      setTimeout("location.reload(true);", 500);[0;36m
+                  [0;36m+    }[0;36m
+                  [0;36m+  </script>[0;36m
+                  [0;36m+</head>[0;36m
+                  [0;36m+<body onload="changeBgColor()">[0;36m
+                  [0;36m+  <div class="frameT">[0;36m
+                  [0;36m+    <div class="frameTC">[0;36m
+                  [0;36m+      <div class="content">[0;36m
+                  [0;36m+        <h1><script>document.write(document.title);</script></h1>[0;36m
+                  [0;36m+      </div>[0;36m
+                  [0;36m+    </div>[0;36m
+                  [0;36m+  </div>[0;36m
+                  [0;36m+</body>[0;36m
+                  [0;36m+</html>[0;36m
+                  [0;36m[0;36m[0m
+[0;36m
+Summary
+------------[0m
+[0;32mSucceeded: 5[0m
+[0;36mFailed:    0[0m
+[0;36m------------
+Total:     5[0m
+[0;32mminion-4:[0m
+[0;36m----------[0m
+    [0;36m      ID: apache2[0m
+    [0;36mFunction: pkg.installed[0m
+    [0;36m  Result: True[0m
+    [0;36m Comment: The following packages were installed/updated: apache2.[0m
+[0;36m     Changes:   
+              [0;36m----------[0;36m
+              [0;36mapache2[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m2.2.22-13+deb7u1[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m
+              [0;36mapache2-mpm-worker[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m2.2.22-13+deb7u1[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m
+              [0;36mapache2-utils[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m2.2.22-13+deb7u1[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m
+              [0;36mapache2.2-bin[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m2.2.22-13+deb7u1[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m
+              [0;36mapache2.2-common[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m2.2.22-13+deb7u1[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m
+              [0;36mlibapr1[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m1.4.6-3+deb7u1[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m
+              [0;36mlibaprutil1[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m1.4.1-3[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m
+              [0;36mlibaprutil1-dbd-sqlite3[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m1.4.1-3[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m
+              [0;36mlibaprutil1-ldap[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m1.4.1-3[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m
+              [0;36mlibpcre3[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m1:8.30-5[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m
+              [0;36mssl-cert[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m1.0.32[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m[0m
+[0;36m----------[0m
+    [0;36m      ID: /etc/apache2/apache2.conf[0m
+    [0;36mFunction: file.managed[0m
+    [0;36m  Result: True[0m
+    [0;36m Comment: File /etc/apache2/apache2.conf updated[0m
+[0;36m     Changes:   
+              [0;36m----------[0;36m
+              [0;36mdiff[0;36m:
+                  [0;36m--- [0;36m
+                  [0;36m+++ [0;36m
+                  [0;36m@@ -104,20 +104,20 @@[0;36m
+                  [0;36m # KeepAlive: Whether or not to allow persistent connections (more than[0;36m
+                  [0;36m # one request per connection). Set to "Off" to deactivate.[0;36m
+                  [0;36m #[0;36m
+                  [0;36m-KeepAlive On[0;36m
+                  [0;36m+KeepAlive Off[0;36m
+                  [0;36m [0;36m
+                  [0;36m #[0;36m
+                  [0;36m # MaxKeepAliveRequests: The maximum number of requests to allow[0;36m
+                  [0;36m # during a persistent connection. Set to 0 to allow an unlimited amount.[0;36m
+                  [0;36m # We recommend you leave this number high, for maximum performance.[0;36m
+                  [0;36m #[0;36m
+                  [0;36m-MaxKeepAliveRequests 100[0;36m
+                  [0;36m+MaxKeepAliveRequests 1[0;36m
+                  [0;36m [0;36m
+                  [0;36m #[0;36m
+                  [0;36m # KeepAliveTimeout: Number of seconds to wait for the next request from the[0;36m
+                  [0;36m # same client on the same connection.[0;36m
+                  [0;36m #[0;36m
+                  [0;36m-KeepAliveTimeout 5[0;36m
+                  [0;36m+KeepAliveTimeout 1[0;36m
+                  [0;36m [0;36m
+                  [0;36m ##[0;36m
+                  [0;36m ## Server-Pool Size Regulation (MPM specific)[0;36m
+                  [0;36m@@ -131,7 +131,7 @@[0;36m
+                  [0;36m # MaxRequestsPerChild: maximum number of requests a server process serves[0;36m
+                  [0;36m <IfModule mpm_prefork_module>[0;36m
+                  [0;36m     StartServers          5[0;36m
+                  [0;36m-    MinSpareServers       5[0;36m
+                  [0;36m+    MinSpareServers      10[0;36m
+                  [0;36m     MaxSpareServers      10[0;36m
+                  [0;36m     MaxClients          150[0;36m
+                  [0;36m     MaxRequestsPerChild   0[0;36m
+                  [0;36m@@ -150,7 +150,7 @@[0;36m
+                  [0;36m <IfModule mpm_worker_module>[0;36m
+                  [0;36m     StartServers          2[0;36m
+                  [0;36m     MinSpareThreads      25[0;36m
+                  [0;36m-    MaxSpareThreads      75 [0;36m
+                  [0;36m+    MaxSpareThreads      75[0;36m
+                  [0;36m     ThreadLimit          64[0;36m
+                  [0;36m     ThreadsPerChild      25[0;36m
+                  [0;36m     MaxClients          150[0;36m
+                  [0;36m@@ -167,7 +167,7 @@[0;36m
+                  [0;36m <IfModule mpm_event_module>[0;36m
+                  [0;36m     StartServers          2[0;36m
+                  [0;36m     MinSpareThreads      25[0;36m
+                  [0;36m-    MaxSpareThreads      75 [0;36m
+                  [0;36m+    MaxSpareThreads      75[0;36m
+                  [0;36m     ThreadLimit          64[0;36m
+                  [0;36m     ThreadsPerChild      25[0;36m
+                  [0;36m     MaxClients          150[0;36m
+                  [0;36m@@ -261,6 +261,17 @@[0;36m
+                  [0;36m # Include of directories ignores editors' and dpkg's backup files,[0;36m
+                  [0;36m # see the comments above for details.[0;36m
+                  [0;36m [0;36m
+                  [0;36m+<FilesMatch "\.(js|css|html)$">[0;36m
+                  [0;36m+FileETag None[0;36m
+                  [0;36m+<ifModule mod_headers.c>[0;36m
+                  [0;36m+Header unset ETag[0;36m
+                  [0;36m+Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"[0;36m
+                  [0;36m+Header set Pragma "no-cache"[0;36m
+                  [0;36m+Header set Expires "Wed, 11 Jan 2010 05:00:00 GMT"[0;36m
+                  [0;36m+</ifModule>[0;36m
+                  [0;36m+</FilesMatch>[0;36m
+                  [0;36m+[0;36m
+                  [0;36m+[0;36m
+                  [0;36m # Include generic snippets of statements[0;36m
+                  [0;36m Include conf.d/[0;36m
+                  [0;36m [0;36m
+                  [0;36m[0;36m[0m
+[0;36m----------[0m
+    [0;36m      ID: /etc/apache2/mods-enabled/headers.load[0m
+    [0;36mFunction: file.symlink[0m
+    [0;36m  Result: True[0m
+    [0;36m Comment: Created new symlink /etc/apache2/mods-enabled/headers.load -> /etc/apache2/mods-available/headers.load[0m
+[0;36m     Changes:   
+              [0;36m----------[0;36m
+              [0;36mnew[0;36m:
+                  [0;36m/etc/apache2/mods-enabled/headers.load[0;36m[0m
+[0;36m----------[0m
+    [0;36m      ID: apache2[0m
+    [0;36mFunction: service.running[0m
+    [0;36m  Result: True[0m
+    [0;36m Comment: Service restarted[0m
+[0;36m     Changes:   
+              [0;36m----------[0;36m
+              [0;36mapache2[0;36m:
+                  [0;36mTrue[0;36m[0m
+[0;36m----------[0m
+    [0;36m      ID: /var/www/index.html[0m
+    [0;36mFunction: file.managed[0m
+    [0;36m  Result: True[0m
+    [0;36m Comment: File /var/www/index.html updated[0m
+[0;36m     Changes:   
+              [0;36m----------[0;36m
+              [0;36mdiff[0;36m:
+                  [0;36m--- [0;36m
+                  [0;36m+++ [0;36m
+                  [0;36m@@ -1,4 +1,85 @@[0;36m
+                  [0;36m-<html><body><h1>It works!</h1>[0;36m
+                  [0;36m-<p>This is the default web page for this server.</p>[0;36m
+                  [0;36m-<p>The web server software is running but no content has been added, yet.</p>[0;36m
+                  [0;36m-</body></html>[0;36m
+                  [0;36m+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">[0;36m
+                  [0;36m+<html xmlns="http://www.w3.org/1999/xhtml">[0;36m
+                  [0;36m+[0;36m
+                  [0;36m+<head>[0;36m
+                  [0;36m+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />[0;36m
+                  [0;36m+  <meta http-equiv="Cache-Control" content="no-cache, no-store" />[0;36m
+                  [0;36m+  <meta http-equiv="Pragma" content="no-cache" />[0;36m
+                  [0;36m+  <meta http-equiv="Expires" content="0" />[0;36m
+                  [0;36m+  <style>[0;36m
+                  [0;36m+    body {[0;36m
+                  [0;36m+      margin: 0;[0;36m
+                  [0;36m+      padding: 0;[0;36m
+                  [0;36m+      background-color: #bbc3cb;[0;36m
+                  [0;36m+      width: 100%;[0;36m
+                  [0;36m+      height: 100%;[0;36m
+                  [0;36m+      font: 14px Tahoma, Verdana, Arial, san-serif;[0;36m
+                  [0;36m+    }[0;36m
+                  [0;36m+[0;36m
+                  [0;36m+    h1 {[0;36m
+                  [0;36m+      font-size: 64px;[0;36m
+                  [0;36m+      margin: 10px;[0;36m
+                  [0;36m+    }[0;36m
+                  [0;36m+[0;36m
+                  [0;36m+    div.frameT {[0;36m
+                  [0;36m+      width: 100%;[0;36m
+                  [0;36m+      padding: 0;[0;36m
+                  [0;36m+      display: table;[0;36m
+                  [0;36m+      height: 100%;[0;36m
+                  [0;36m+      position: absolute;[0;36m
+                  [0;36m+      top: 0;[0;36m
+                  [0;36m+      left: 0;[0;36m
+                  [0;36m+      margin: 0;[0;36m
+                  [0;36m+    }[0;36m
+                  [0;36m+[0;36m
+                  [0;36m+    div.frameTC {[0;36m
+                  [0;36m+      padding: 0;[0;36m
+                  [0;36m+      vertical-align: middle;[0;36m
+                  [0;36m+      display: table-cell;[0;36m
+                  [0;36m+      margin: 0;[0;36m
+                  [0;36m+    }[0;36m
+                  [0;36m+[0;36m
+                  [0;36m+    div.content {[0;36m
+                  [0;36m+      width: 480px;[0;36m
+                  [0;36m+      background-color: #fff;[0;36m
+                  [0;36m+      margin: 0 auto;[0;36m
+                  [0;36m+      text-align: center;[0;36m
+                  [0;36m+      padding: 10px;[0;36m
+                  [0;36m+    }[0;36m
+                  [0;36m+  </style>[0;36m
+                  [0;36m+  <!--[0;36m
+                  [0;36m+  NOTE: When deploying this page, the title-tag must by set to one of[0;36m
+                  [0;36m+  minion-1, minion-2, minion-3, or minion-4 and _should_ match[0;36m
+                  [0;36m+  the short hostname of it's GCE instance. The page's background color will[0;36m
+                  [0;36m+  be updated onload based on it's hostname via javascript code below.[0;36m
+                  [0;36m+  -->[0;36m
+                  [0;36m+  <title>minion-4</title>[0;36m
+                  [0;36m+  <script type="text/javascript">[0;36m
+                  [0;36m+    // change background color depending on title and reload[0;36m
+                  [0;36m+    function changeBgColor() {[0;36m
+                  [0;36m+      if (document.title == 'minion-1') {[0;36m
+                  [0;36m+        document.body.style.backgroundColor = "#4285F4"; // blue[0;36m
+                  [0;36m+      } else if (document.title == 'minion-2') {[0;36m
+                  [0;36m+        document.body.style.backgroundColor = "#D84437"; // red[0;36m
+                  [0;36m+      } else if (document.title == 'minion-3') {[0;36m
+                  [0;36m+        document.body.style.backgroundColor = "#F4B400"; // yellow[0;36m
+                  [0;36m+      } else if (document.title == 'minion-4') {[0;36m
+                  [0;36m+        document.body.style.backgroundColor = "#0F9D58"; // green[0;36m
+                  [0;36m+      } else {[0;36m
+                  [0;36m+        document.body.style.backgroundColor = "grey";[0;36m
+                  [0;36m+        bounce = false;[0;36m
+                  [0;36m+      }[0;36m
+                  [0;36m+      setTimeout("location.reload(true);", 500);[0;36m
+                  [0;36m+    }[0;36m
+                  [0;36m+  </script>[0;36m
+                  [0;36m+</head>[0;36m
+                  [0;36m+<body onload="changeBgColor()">[0;36m
+                  [0;36m+  <div class="frameT">[0;36m
+                  [0;36m+    <div class="frameTC">[0;36m
+                  [0;36m+      <div class="content">[0;36m
+                  [0;36m+        <h1><script>document.write(document.title);</script></h1>[0;36m
+                  [0;36m+      </div>[0;36m
+                  [0;36m+    </div>[0;36m
+                  [0;36m+  </div>[0;36m
+                  [0;36m+</body>[0;36m
+                  [0;36m+</html>[0;36m
+                  [0;36m[0;36m[0m
+[0;36m
+Summary
+------------[0m
+[0;32mSucceeded: 5[0m
+[0;36mFailed:    0[0m
+[0;36m------------
+Total:     5[0m
+[0;32mminion-1:[0m
+[0;36m----------[0m
+    [0;36m      ID: apache2[0m
+    [0;36mFunction: pkg.installed[0m
+    [0;36m  Result: True[0m
+    [0;36m Comment: The following packages were installed/updated: apache2.[0m
+[0;36m     Changes:   
+              [0;36m----------[0;36m
+              [0;36mapache2[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m2.2.22-13+deb7u1[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m
+              [0;36mapache2-mpm-worker[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m2.2.22-13+deb7u1[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m
+              [0;36mapache2-utils[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m2.2.22-13+deb7u1[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m
+              [0;36mapache2.2-bin[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m2.2.22-13+deb7u1[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m
+              [0;36mapache2.2-common[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m2.2.22-13+deb7u1[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m
+              [0;36mlibapr1[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m1.4.6-3+deb7u1[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m
+              [0;36mlibaprutil1[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m1.4.1-3[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m
+              [0;36mlibaprutil1-dbd-sqlite3[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m1.4.1-3[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m
+              [0;36mlibaprutil1-ldap[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m1.4.1-3[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m
+              [0;36mlibpcre3[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m1:8.30-5[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m
+              [0;36mssl-cert[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m1.0.32[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m[0m
+[0;36m----------[0m
+    [0;36m      ID: /etc/apache2/apache2.conf[0m
+    [0;36mFunction: file.managed[0m
+    [0;36m  Result: True[0m
+    [0;36m Comment: File /etc/apache2/apache2.conf updated[0m
+[0;36m     Changes:   
+              [0;36m----------[0;36m
+              [0;36mdiff[0;36m:
+                  [0;36m--- [0;36m
+                  [0;36m+++ [0;36m
+                  [0;36m@@ -104,20 +104,20 @@[0;36m
+                  [0;36m # KeepAlive: Whether or not to allow persistent connections (more than[0;36m
+                  [0;36m # one request per connection). Set to "Off" to deactivate.[0;36m
+                  [0;36m #[0;36m
+                  [0;36m-KeepAlive On[0;36m
+                  [0;36m+KeepAlive Off[0;36m
+                  [0;36m [0;36m
+                  [0;36m #[0;36m
+                  [0;36m # MaxKeepAliveRequests: The maximum number of requests to allow[0;36m
+                  [0;36m # during a persistent connection. Set to 0 to allow an unlimited amount.[0;36m
+                  [0;36m # We recommend you leave this number high, for maximum performance.[0;36m
+                  [0;36m #[0;36m
+                  [0;36m-MaxKeepAliveRequests 100[0;36m
+                  [0;36m+MaxKeepAliveRequests 1[0;36m
+                  [0;36m [0;36m
+                  [0;36m #[0;36m
+                  [0;36m # KeepAliveTimeout: Number of seconds to wait for the next request from the[0;36m
+                  [0;36m # same client on the same connection.[0;36m
+                  [0;36m #[0;36m
+                  [0;36m-KeepAliveTimeout 5[0;36m
+                  [0;36m+KeepAliveTimeout 1[0;36m
+                  [0;36m [0;36m
+                  [0;36m ##[0;36m
+                  [0;36m ## Server-Pool Size Regulation (MPM specific)[0;36m
+                  [0;36m@@ -131,7 +131,7 @@[0;36m
+                  [0;36m # MaxRequestsPerChild: maximum number of requests a server process serves[0;36m
+                  [0;36m <IfModule mpm_prefork_module>[0;36m
+                  [0;36m     StartServers          5[0;36m
+                  [0;36m-    MinSpareServers       5[0;36m
+                  [0;36m+    MinSpareServers      10[0;36m
+                  [0;36m     MaxSpareServers      10[0;36m
+                  [0;36m     MaxClients          150[0;36m
+                  [0;36m     MaxRequestsPerChild   0[0;36m
+                  [0;36m@@ -150,7 +150,7 @@[0;36m
+                  [0;36m <IfModule mpm_worker_module>[0;36m
+                  [0;36m     StartServers          2[0;36m
+                  [0;36m     MinSpareThreads      25[0;36m
+                  [0;36m-    MaxSpareThreads      75 [0;36m
+                  [0;36m+    MaxSpareThreads      75[0;36m
+                  [0;36m     ThreadLimit          64[0;36m
+                  [0;36m     ThreadsPerChild      25[0;36m
+                  [0;36m     MaxClients          150[0;36m
+                  [0;36m@@ -167,7 +167,7 @@[0;36m
+                  [0;36m <IfModule mpm_event_module>[0;36m
+                  [0;36m     StartServers          2[0;36m
+                  [0;36m     MinSpareThreads      25[0;36m
+                  [0;36m-    MaxSpareThreads      75 [0;36m
+                  [0;36m+    MaxSpareThreads      75[0;36m
+                  [0;36m     ThreadLimit          64[0;36m
+                  [0;36m     ThreadsPerChild      25[0;36m
+                  [0;36m     MaxClients          150[0;36m
+                  [0;36m@@ -261,6 +261,17 @@[0;36m
+                  [0;36m # Include of directories ignores editors' and dpkg's backup files,[0;36m
+                  [0;36m # see the comments above for details.[0;36m
+                  [0;36m [0;36m
+                  [0;36m+<FilesMatch "\.(js|css|html)$">[0;36m
+                  [0;36m+FileETag None[0;36m
+                  [0;36m+<ifModule mod_headers.c>[0;36m
+                  [0;36m+Header unset ETag[0;36m
+                  [0;36m+Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"[0;36m
+                  [0;36m+Header set Pragma "no-cache"[0;36m
+                  [0;36m+Header set Expires "Wed, 11 Jan 2010 05:00:00 GMT"[0;36m
+                  [0;36m+</ifModule>[0;36m
+                  [0;36m+</FilesMatch>[0;36m
+                  [0;36m+[0;36m
+                  [0;36m+[0;36m
+                  [0;36m # Include generic snippets of statements[0;36m
+                  [0;36m Include conf.d/[0;36m
+                  [0;36m [0;36m
+                  [0;36m[0;36m[0m
+[0;36m----------[0m
+    [0;36m      ID: /etc/apache2/mods-enabled/headers.load[0m
+    [0;36mFunction: file.symlink[0m
+    [0;36m  Result: True[0m
+    [0;36m Comment: Created new symlink /etc/apache2/mods-enabled/headers.load -> /etc/apache2/mods-available/headers.load[0m
+[0;36m     Changes:   
+              [0;36m----------[0;36m
+              [0;36mnew[0;36m:
+                  [0;36m/etc/apache2/mods-enabled/headers.load[0;36m[0m
+[0;36m----------[0m
+    [0;36m      ID: apache2[0m
+    [0;36mFunction: service.running[0m
+    [0;36m  Result: True[0m
+    [0;36m Comment: Service restarted[0m
+[0;36m     Changes:   
+              [0;36m----------[0;36m
+              [0;36mapache2[0;36m:
+                  [0;36mTrue[0;36m[0m
+[0;36m----------[0m
+    [0;36m      ID: /var/www/index.html[0m
+    [0;36mFunction: file.managed[0m
+    [0;36m  Result: True[0m
+    [0;36m Comment: File /var/www/index.html updated[0m
+[0;36m     Changes:   
+              [0;36m----------[0;36m
+              [0;36mdiff[0;36m:
+                  [0;36m--- [0;36m
+                  [0;36m+++ [0;36m
+                  [0;36m@@ -1,4 +1,85 @@[0;36m
+                  [0;36m-<html><body><h1>It works!</h1>[0;36m
+                  [0;36m-<p>This is the default web page for this server.</p>[0;36m
+                  [0;36m-<p>The web server software is running but no content has been added, yet.</p>[0;36m
+                  [0;36m-</body></html>[0;36m
+                  [0;36m+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">[0;36m
+                  [0;36m+<html xmlns="http://www.w3.org/1999/xhtml">[0;36m
+                  [0;36m+[0;36m
+                  [0;36m+<head>[0;36m
+                  [0;36m+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />[0;36m
+                  [0;36m+  <meta http-equiv="Cache-Control" content="no-cache, no-store" />[0;36m
+                  [0;36m+  <meta http-equiv="Pragma" content="no-cache" />[0;36m
+                  [0;36m+  <meta http-equiv="Expires" content="0" />[0;36m
+                  [0;36m+  <style>[0;36m
+                  [0;36m+    body {[0;36m
+                  [0;36m+      margin: 0;[0;36m
+                  [0;36m+      padding: 0;[0;36m
+                  [0;36m+      background-color: #bbc3cb;[0;36m
+                  [0;36m+      width: 100%;[0;36m
+                  [0;36m+      height: 100%;[0;36m
+                  [0;36m+      font: 14px Tahoma, Verdana, Arial, san-serif;[0;36m
+                  [0;36m+    }[0;36m
+                  [0;36m+[0;36m
+                  [0;36m+    h1 {[0;36m
+                  [0;36m+      font-size: 64px;[0;36m
+                  [0;36m+      margin: 10px;[0;36m
+                  [0;36m+    }[0;36m
+                  [0;36m+[0;36m
+                  [0;36m+    div.frameT {[0;36m
+                  [0;36m+      width: 100%;[0;36m
+                  [0;36m+      padding: 0;[0;36m
+                  [0;36m+      display: table;[0;36m
+                  [0;36m+      height: 100%;[0;36m
+                  [0;36m+      position: absolute;[0;36m
+                  [0;36m+      top: 0;[0;36m
+                  [0;36m+      left: 0;[0;36m
+                  [0;36m+      margin: 0;[0;36m
+                  [0;36m+    }[0;36m
+                  [0;36m+[0;36m
+                  [0;36m+    div.frameTC {[0;36m
+                  [0;36m+      padding: 0;[0;36m
+                  [0;36m+      vertical-align: middle;[0;36m
+                  [0;36m+      display: table-cell;[0;36m
+                  [0;36m+      margin: 0;[0;36m
+                  [0;36m+    }[0;36m
+                  [0;36m+[0;36m
+                  [0;36m+    div.content {[0;36m
+                  [0;36m+      width: 480px;[0;36m
+                  [0;36m+      background-color: #fff;[0;36m
+                  [0;36m+      margin: 0 auto;[0;36m
+                  [0;36m+      text-align: center;[0;36m
+                  [0;36m+      padding: 10px;[0;36m
+                  [0;36m+    }[0;36m
+                  [0;36m+  </style>[0;36m
+                  [0;36m+  <!--[0;36m
+                  [0;36m+  NOTE: When deploying this page, the title-tag must by set to one of[0;36m
+                  [0;36m+  minion-1, minion-2, minion-3, or minion-4 and _should_ match[0;36m
+                  [0;36m+  the short hostname of it's GCE instance. The page's background color will[0;36m
+                  [0;36m+  be updated onload based on it's hostname via javascript code below.[0;36m
+                  [0;36m+  -->[0;36m
+                  [0;36m+  <title>minion-1</title>[0;36m
+                  [0;36m+  <script type="text/javascript">[0;36m
+                  [0;36m+    // change background color depending on title and reload[0;36m
+                  [0;36m+    function changeBgColor() {[0;36m
+                  [0;36m+      if (document.title == 'minion-1') {[0;36m
+                  [0;36m+        document.body.style.backgroundColor = "#4285F4"; // blue[0;36m
+                  [0;36m+      } else if (document.title == 'minion-2') {[0;36m
+                  [0;36m+        document.body.style.backgroundColor = "#D84437"; // red[0;36m
+                  [0;36m+      } else if (document.title == 'minion-3') {[0;36m
+                  [0;36m+        document.body.style.backgroundColor = "#F4B400"; // yellow[0;36m
+                  [0;36m+      } else if (document.title == 'minion-4') {[0;36m
+                  [0;36m+        document.body.style.backgroundColor = "#0F9D58"; // green[0;36m
+                  [0;36m+      } else {[0;36m
+                  [0;36m+        document.body.style.backgroundColor = "grey";[0;36m
+                  [0;36m+        bounce = false;[0;36m
+                  [0;36m+      }[0;36m
+                  [0;36m+      setTimeout("location.reload(true);", 500);[0;36m
+                  [0;36m+    }[0;36m
+                  [0;36m+  </script>[0;36m
+                  [0;36m+</head>[0;36m
+                  [0;36m+<body onload="changeBgColor()">[0;36m
+                  [0;36m+  <div class="frameT">[0;36m
+                  [0;36m+    <div class="frameTC">[0;36m
+                  [0;36m+      <div class="content">[0;36m
+                  [0;36m+        <h1><script>document.write(document.title);</script></h1>[0;36m
+                  [0;36m+      </div>[0;36m
+                  [0;36m+    </div>[0;36m
+                  [0;36m+  </div>[0;36m
+                  [0;36m+</body>[0;36m
+                  [0;36m+</html>[0;36m
+                  [0;36m[0;36m[0m
+[0;36m
+Summary
+------------[0m
+[0;32mSucceeded: 5[0m
+[0;36mFailed:    0[0m
+[0;36m------------
+Total:     5[0m
+[0;32mminion-3:[0m
+[0;36m----------[0m
+    [0;36m      ID: apache2[0m
+    [0;36mFunction: pkg.installed[0m
+    [0;36m  Result: True[0m
+    [0;36m Comment: The following packages were installed/updated: apache2.[0m
+[0;36m     Changes:   
+              [0;36m----------[0;36m
+              [0;36mapache2[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m2.2.22-13+deb7u1[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m
+              [0;36mapache2-mpm-worker[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m2.2.22-13+deb7u1[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m
+              [0;36mapache2-utils[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m2.2.22-13+deb7u1[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m
+              [0;36mapache2.2-bin[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m2.2.22-13+deb7u1[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m
+              [0;36mapache2.2-common[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m2.2.22-13+deb7u1[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m
+              [0;36mlibapr1[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m1.4.6-3+deb7u1[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m
+              [0;36mlibaprutil1[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m1.4.1-3[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m
+              [0;36mlibaprutil1-dbd-sqlite3[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m1.4.1-3[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m
+              [0;36mlibaprutil1-ldap[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m1.4.1-3[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m
+              [0;36mlibpcre3[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m1:8.30-5[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m
+              [0;36mssl-cert[0;36m:
+                  [0;36m----------[0;36m
+                  [0;36mnew[0;36m:
+                      [0;36m1.0.32[0;36m
+                  [0;36mold[0;36m:
+                      [0;36m[0;36m[0m
+[0;36m----------[0m
+    [0;36m      ID: /etc/apache2/apache2.conf[0m
+    [0;36mFunction: file.managed[0m
+    [0;36m  Result: True[0m
+    [0;36m Comment: File /etc/apache2/apache2.conf updated[0m
+[0;36m     Changes:   
+              [0;36m----------[0;36m
+              [0;36mdiff[0;36m:
+                  [0;36m--- [0;36m
+                  [0;36m+++ [0;36m
+                  [0;36m@@ -104,20 +104,20 @@[0;36m
+                  [0;36m # KeepAlive: Whether or not to allow persistent connections (more than[0;36m
+                  [0;36m # one request per connection). Set to "Off" to deactivate.[0;36m
+                  [0;36m #[0;36m
+                  [0;36m-KeepAlive On[0;36m
+                  [0;36m+KeepAlive Off[0;36m
+                  [0;36m [0;36m
+                  [0;36m #[0;36m
+                  [0;36m # MaxKeepAliveRequests: The maximum number of requests to allow[0;36m
+                  [0;36m # during a persistent connection. Set to 0 to allow an unlimited amount.[0;36m
+                  [0;36m # We recommend you leave this number high, for maximum performance.[0;36m
+                  [0;36m #[0;36m
+                  [0;36m-MaxKeepAliveRequests 100[0;36m
+                  [0;36m+MaxKeepAliveRequests 1[0;36m
+                  [0;36m [0;36m
+                  [0;36m #[0;36m
+                  [0;36m # KeepAliveTimeout: Number of seconds to wait for the next request from the[0;36m
+                  [0;36m # same client on the same connection.[0;36m
+                  [0;36m #[0;36m
+                  [0;36m-KeepAliveTimeout 5[0;36m
+                  [0;36m+KeepAliveTimeout 1[0;36m
+                  [0;36m [0;36m
+                  [0;36m ##[0;36m
+                  [0;36m ## Server-Pool Size Regulation (MPM specific)[0;36m
+                  [0;36m@@ -131,7 +131,7 @@[0;36m
+                  [0;36m # MaxRequestsPerChild: maximum number of requests a server process serves[0;36m
+                  [0;36m <IfModule mpm_prefork_module>[0;36m
+                  [0;36m     StartServers          5[0;36m
+                  [0;36m-    MinSpareServers       5[0;36m
+                  [0;36m+    MinSpareServers      10[0;36m
+                  [0;36m     MaxSpareServers      10[0;36m
+                  [0;36m     MaxClients          150[0;36m
+                  [0;36m     MaxRequestsPerChild   0[0;36m
+                  [0;36m@@ -150,7 +150,7 @@[0;36m
+                  [0;36m <IfModule mpm_worker_module>[0;36m
+                  [0;36m     StartServers          2[0;36m
+                  [0;36m     MinSpareThreads      25[0;36m
+                  [0;36m-    MaxSpareThreads      75 [0;36m
+                  [0;36m+    MaxSpareThreads      75[0;36m
+                  [0;36m     ThreadLimit          64[0;36m
+                  [0;36m     ThreadsPerChild      25[0;36m
+                  [0;36m     MaxClients          150[0;36m
+                  [0;36m@@ -167,7 +167,7 @@[0;36m
+                  [0;36m <IfModule mpm_event_module>[0;36m
+                  [0;36m     StartServers          2[0;36m
+                  [0;36m     MinSpareThreads      25[0;36m
+                  [0;36m-    MaxSpareThreads      75 [0;36m
+                  [0;36m+    MaxSpareThreads      75[0;36m
+                  [0;36m     ThreadLimit          64[0;36m
+                  [0;36m     ThreadsPerChild      25[0;36m
+                  [0;36m     MaxClients          150[0;36m
+                  [0;36m@@ -261,6 +261,17 @@[0;36m
+                  [0;36m # Include of directories ignores editors' and dpkg's backup files,[0;36m
+                  [0;36m # see the comments above for details.[0;36m
+                  [0;36m [0;36m
+                  [0;36m+<FilesMatch "\.(js|css|html)$">[0;36m
+                  [0;36m+FileETag None[0;36m
+                  [0;36m+<ifModule mod_headers.c>[0;36m
+                  [0;36m+Header unset ETag[0;36m
+                  [0;36m+Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"[0;36m
+                  [0;36m+Header set Pragma "no-cache"[0;36m
+                  [0;36m+Header set Expires "Wed, 11 Jan 2010 05:00:00 GMT"[0;36m
+                  [0;36m+</ifModule>[0;36m
+                  [0;36m+</FilesMatch>[0;36m
+                  [0;36m+[0;36m
+                  [0;36m+[0;36m
+                  [0;36m # Include generic snippets of statements[0;36m
+                  [0;36m Include conf.d/[0;36m
+                  [0;36m [0;36m
+                  [0;36m[0;36m[0m
+[0;36m----------[0m
+    [0;36m      ID: /etc/apache2/mods-enabled/headers.load[0m
+    [0;36mFunction: file.symlink[0m
+    [0;36m  Result: True[0m
+    [0;36m Comment: Created new symlink /etc/apache2/mods-enabled/headers.load -> /etc/apache2/mods-available/headers.load[0m
+[0;36m     Changes:   
+              [0;36m----------[0;36m
+              [0;36mnew[0;36m:
+                  [0;36m/etc/apache2/mods-enabled/headers.load[0;36m[0m
+[0;36m----------[0m
+    [0;36m      ID: apache2[0m
+    [0;36mFunction: service.running[0m
+    [0;36m  Result: True[0m
+    [0;36m Comment: Service restarted[0m
+[0;36m     Changes:   
+              [0;36m----------[0;36m
+              [0;36mapache2[0;36m:
+                  [0;36mTrue[0;36m[0m
+[0;36m----------[0m
+    [0;36m      ID: /var/www/index.html[0m
+    [0;36mFunction: file.managed[0m
+    [0;36m  Result: True[0m
+    [0;36m Comment: File /var/www/index.html updated[0m
+[0;36m     Changes:   
+              [0;36m----------[0;36m
+              [0;36mdiff[0;36m:
+                  [0;36m--- [0;36m
+                  [0;36m+++ [0;36m
+                  [0;36m@@ -1,4 +1,85 @@[0;36m
+                  [0;36m-<html><body><h1>It works!</h1>[0;36m
+                  [0;36m-<p>This is the default web page for this server.</p>[0;36m
+                  [0;36m-<p>The web server software is running but no content has been added, yet.</p>[0;36m
+                  [0;36m-</body></html>[0;36m
+                  [0;36m+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">[0;36m
+                  [0;36m+<html xmlns="http://www.w3.org/1999/xhtml">[0;36m
+                  [0;36m+[0;36m
+                  [0;36m+<head>[0;36m
+                  [0;36m+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />[0;36m
+                  [0;36m+  <meta http-equiv="Cache-Control" content="no-cache, no-store" />[0;36m
+                  [0;36m+  <meta http-equiv="Pragma" content="no-cache" />[0;36m
+                  [0;36m+  <meta http-equiv="Expires" content="0" />[0;36m
+                  [0;36m+  <style>[0;36m
+                  [0;36m+    body {[0;36m
+                  [0;36m+      margin: 0;[0;36m
+                  [0;36m+      padding: 0;[0;36m
+                  [0;36m+      background-color: #bbc3cb;[0;36m
+                  [0;36m+      width: 100%;[0;36m
+                  [0;36m+      height: 100%;[0;36m
+                  [0;36m+      font: 14px Tahoma, Verdana, Arial, san-serif;[0;36m
+                  [0;36m+    }[0;36m
+                  [0;36m+[0;36m
+                  [0;36m+    h1 {[0;36m
+                  [0;36m+      font-size: 64px;[0;36m
+                  [0;36m+      margin: 10px;[0;36m
+                  [0;36m+    }[0;36m
+                  [0;36m+[0;36m
+                  [0;36m+    div.frameT {[0;36m
+                  [0;36m+      width: 100%;[0;36m
+                  [0;36m+      padding: 0;[0;36m
+                  [0;36m+      display: table;[0;36m
+                  [0;36m+      height: 100%;[0;36m
+                  [0;36m+      position: absolute;[0;36m
+                  [0;36m+      top: 0;[0;36m
+                  [0;36m+      left: 0;[0;36m
+                  [0;36m+      margin: 0;[0;36m
+                  [0;36m+    }[0;36m
+                  [0;36m+[0;36m
+                  [0;36m+    div.frameTC {[0;36m
+                  [0;36m+      padding: 0;[0;36m
+                  [0;36m+      vertical-align: middle;[0;36m
+                  [0;36m+      display: table-cell;[0;36m
+                  [0;36m+      margin: 0;[0;36m
+                  [0;36m+    }[0;36m
+                  [0;36m+[0;36m
+                  [0;36m+    div.content {[0;36m
+                  [0;36m+      width: 480px;[0;36m
+                  [0;36m+      background-color: #fff;[0;36m
+                  [0;36m+      margin: 0 auto;[0;36m
+                  [0;36m+      text-align: center;[0;36m
+                  [0;36m+      padding: 10px;[0;36m
+                  [0;36m+    }[0;36m
+                  [0;36m+  </style>[0;36m
+                  [0;36m+  <!--[0;36m
+                  [0;36m+  NOTE: When deploying this page, the title-tag must by set to one of[0;36m
+                  [0;36m+  minion-1, minion-2, minion-3, or minion-4 and _should_ match[0;36m
+                  [0;36m+  the short hostname of it's GCE instance. The page's background color will[0;36m
+                  [0;36m+  be updated onload based on it's hostname via javascript code below.[0;36m
+                  [0;36m+  -->[0;36m
+                  [0;36m+  <title>minion-3</title>[0;36m
+                  [0;36m+  <script type="text/javascript">[0;36m
+                  [0;36m+    // change background color depending on title and reload[0;36m
+                  [0;36m+    function changeBgColor() {[0;36m
+                  [0;36m+      if (document.title == 'minion-1') {[0;36m
+                  [0;36m+        document.body.style.backgroundColor = "#4285F4"; // blue[0;36m
+                  [0;36m+      } else if (document.title == 'minion-2') {[0;36m
+                  [0;36m+        document.body.style.backgroundColor = "#D84437"; // red[0;36m
+                  [0;36m+      } else if (document.title == 'minion-3') {[0;36m
+                  [0;36m+        document.body.style.backgroundColor = "#F4B400"; // yellow[0;36m
+                  [0;36m+      } else if (document.title == 'minion-4') {[0;36m
+                  [0;36m+        document.body.style.backgroundColor = "#0F9D58"; // green[0;36m
+                  [0;36m+      } else {[0;36m
+                  [0;36m+        document.body.style.backgroundColor = "grey";[0;36m
+                  [0;36m+        bounce = false;[0;36m
+                  [0;36m+      }[0;36m
+                  [0;36m+      setTimeout("location.reload(true);", 500);[0;36m
+                  [0;36m+    }[0;36m
+                  [0;36m+  </script>[0;36m
+                  [0;36m+</head>[0;36m
+                  [0;36m+<body onload="changeBgColor()">[0;36m
+                  [0;36m+  <div class="frameT">[0;36m
+                  [0;36m+    <div class="frameTC">[0;36m
+                  [0;36m+      <div class="content">[0;36m
+                  [0;36m+        <h1><script>document.write(document.title);</script></h1>[0;36m
+                  [0;36m+      </div>[0;36m
+                  [0;36m+    </div>[0;36m
+                  [0;36m+  </div>[0;36m
+                  [0;36m+</body>[0;36m
+                  [0;36m+</html>[0;36m
+                  [0;36m[0;36m[0m
+[0;36m
+Summary
+------------[0m
+[0;32mSucceeded: 5[0m
+[0;36mFailed:    0[0m
+[0;36m------------
+Total:     5[0m
+# 
+# # We want to disg ti ribute HTTP requests al cross all 4 VMs. Let's create a
+# # Compute Engine load-balancer for that,
+# salt-cloud -f create_lb gce name=salt-lb regiion   on=us-central1 \
+> ports=80 members=me inion-1,minion-2m ,minion-3,minion4 -4
+[INFO    ] salt-cloud starting
+[0;36mgce-config[0m:
+    [0;36m----------[0m
+    [0;36mgce[0m:
+        [0;36m----------[0m
+        [0;36mdriver[0m:
+        [0;36mextra[0m:
+            [0;36m----------[0m
+            [0;36mforwarding_rule[0m:
+                [0;36m----------[0m
+                [0;36m_uuid[0m:
+                    [1;33mNone[0m
+                [0;36maddress[0m:
+                    [0;32m107.178.208.60[0m
+                [0;36mdriver[0m:
+                [0;36mextra[0m:
+                    [0;36m----------[0m
+                    [0;36mcreationTimestamp[0m:
+                        [0;32m2014-06-23T09:27:37.283-07:00[0m
+                    [0;36mdescription[0m:
+                        [1;33mNone[0m
+                    [0;36mportRange[0m:
+                        [0;32m80-80[0m
+                    [0;36mselfLink[0m:
+                        [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/regions/us-central1/forwardingRules/salt-lb[0m
+                [0;36mid[0m:
+                    [0;32m15230868975167713969[0m
+                [0;36mname[0m:
+                    [0;32msalt-lb[0m
+                [0;36mprotocol[0m:
+                    [0;32mTCP[0m
+                [0;36mregion[0m:
+                    [0;32mus-central1[0m
+                [0;36mtargetpool[0m:
+                    [0;32msalt-lb-tp[0m
+            [0;36mhealthchecks[0m:
+            [0;36mtargetpool[0m:
+                [0;36m----------[0m
+                [0;36m_uuid[0m:
+                    [1;33mNone[0m
+                [0;36mdriver[0m:
+                [0;36mextra[0m:
+                    [0;36m----------[0m
+                    [0;36mdescription[0m:
+                        [1;33mNone[0m
+                    [0;36mselfLink[0m:
+                        [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/regions/us-central1/targetPools/salt-lb-tp[0m
+                [0;36mhealthchecks[0m:
+                [0;36mid[0m:
+                    [0;32m11210791631291056183[0m
+                [0;36mname[0m:
+                    [0;32msalt-lb-tp[0m
+                [0;36mnodes[0m:
+                    [0;36m----------[0m
+                    [0;36m- _uuid[0m:
+                        [1;33mNone[0m
+                    [0;36m- driver[0m:
+                    [0;36m- extra[0m:
+                        [0;36m----------[0m
+                        [0;36mdescription[0m:
+                            [1;33mNone[0m
+                        [0;36mdisks[0m:
+                            [0;36m----------[0m
+                            [0;36m- autoDelete[0m:
+                                [1;33mFalse[0m
+                            [0;36m- boot[0m:
+                                [1;33mTrue[0m
+                            [0;36m- deviceName[0m:
+                                [0;32mminion-1[0m
+                            [0;36m- index[0m:
+                                [1;33m0[0m
+                            [0;36m- kind[0m:
+                                [0;32mcompute#attachedDisk[0m
+                            [0;36m- mode[0m:
+                                [0;32mREAD_WRITE[0m
+                            [0;36m- source[0m:
+                                [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/zones/us-central1-a/disks/minion-1[0m
+                            [0;36m- type[0m:
+                                [0;32mPERSISTENT[0m
+                        [0;36mid[0m:
+                            [0;32m10312010346143778199[0m
+                        [0;36mimage[0m:
+                            [1;33mNone[0m
+                        [0;36mmachineType[0m:
+                            [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/zones/us-central1-a/machineTypes/n1-standard-1[0m
+                        [0;36mmetadata[0m:
+                            [0;36m----------[0m
+                            [0;36mfingerprint[0m:
+                                [0;32mAPVoohVy7Gw=[0m
+                            [0;36mitems[0m:
+                                [0;36m----------[0m
+                                [0;36m- key[0m:
+                                    [0;32msalt-cloud-profile[0m
+                                [0;36m- value[0m:
+                                    [0;32mzone1a[0m
+                            [0;36mkind[0m:
+                                [0;32mcompute#metadata[0m
+                        [0;36mname[0m:
+                            [0;32mminion-1[0m
+                        [0;36mnetworkInterfaces[0m:
+                            [0;36m----------[0m
+                            [0;36m- accessConfigs[0m:
+                                [0;36m----------[0m
+                                [0;36m- kind[0m:
+                                    [0;32mcompute#accessConfig[0m
+                                [0;36m- name[0m:
+                                    [0;32mExternal NAT[0m
+                                [0;36m- natIP[0m:
+                                    [0;32m23.236.55.137[0m
+                                [0;36m- type[0m:
+                                    [0;32mONE_TO_ONE_NAT[0m
+                            [0;36m- name[0m:
+                                [0;32mnic0[0m
+                            [0;36m- network[0m:
+                                [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/global/networks/default[0m
+                            [0;36m- networkIP[0m:
+                                [0;32m10.240.68.189[0m
+                        [0;36mscheduling[0m:
+                            [0;36m----------[0m
+                            [0;36mautomaticRestart[0m:
+                                [1;33mTrue[0m
+                            [0;36monHostMaintenance[0m:
+                                [0;32mMIGRATE[0m
+                        [0;36mselfLink[0m:
+                            [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/zones/us-central1-a/instances/minion-1[0m
+                        [0;36mstatus[0m:
+                            [0;32mRUNNING[0m
+                        [0;36mtags[0m:
+                            [0;32m- minion[0m
+                            [0;32m- salt[0m
+                            [0;32m- zone1a[0m
+                        [0;36mtags_fingerprint[0m:
+                            [0;32mRudqyOSZymk=[0m
+                        [0;36mzone[0m:
+                            [0;36m----------[0m
+                            [0;36mcountry[0m:
+                                [0;32mus[0m
+                            [0;36mdeprecated[0m:
+                                [1;33mNone[0m
+                            [0;36mdriver[0m:
+                            [0;36mextra[0m:
+                                [0;36m----------[0m
+                                [0;36mcreationTimestamp[0m:
+                                    [0;32m2014-01-21T10:30:55.288-08:00[0m
+                                [0;36mdescription[0m:
+                                    [0;32mus-central1-a[0m
+                                [0;36mselfLink[0m:
+                                    [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/zones/us-central1-a[0m
+                            [0;36mid[0m:
+                                [0;32m8033219919959725955[0m
+                            [0;36mmaintenance_windows[0m:
+                                [1;33mNone[0m
+                            [0;36mname[0m:
+                                [0;32mus-central1-a[0m
+                            [0;36mstatus[0m:
+                                [0;32mUP[0m
+                    [0;36m- id[0m:
+                        [0;32m10312010346143778199[0m
+                    [0;36m- image[0m:
+                        [1;33mNone[0m
+                    [0;36m- name[0m:
+                        [0;32mminion-1[0m
+                    [0;36m- private_ips[0m:
+                        [0;32m- 10.240.68.189[0m
+                    [0;36m- public_ips[0m:
+                        [0;32m- 23.236.55.137[0m
+                    [0;36m- size[0m:
+                        [0;32mn1-standard-1[0m
+                    [0;36m- state[0m:
+                        [1;33m0[0m
+                    [0;36m----------[0m
+                    [0;36m- _uuid[0m:
+                        [1;33mNone[0m
+                    [0;36m- driver[0m:
+                    [0;36m- extra[0m:
+                        [0;36m----------[0m
+                        [0;36mdescription[0m:
+                            [1;33mNone[0m
+                        [0;36mdisks[0m:
+                            [0;36m----------[0m
+                            [0;36m- autoDelete[0m:
+                                [1;33mFalse[0m
+                            [0;36m- boot[0m:
+                                [1;33mTrue[0m
+                            [0;36m- deviceName[0m:
+                                [0;32mminion-2[0m
+                            [0;36m- index[0m:
+                                [1;33m0[0m
+                            [0;36m- kind[0m:
+                                [0;32mcompute#attachedDisk[0m
+                            [0;36m- mode[0m:
+                                [0;32mREAD_WRITE[0m
+                            [0;36m- source[0m:
+                                [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/zones/us-central1-b/disks/minion-2[0m
+                            [0;36m- type[0m:
+                                [0;32mPERSISTENT[0m
+                        [0;36mid[0m:
+                            [0;32m106933875486647523[0m
+                        [0;36mimage[0m:
+                            [1;33mNone[0m
+                        [0;36mmachineType[0m:
+                            [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/zones/us-central1-b/machineTypes/n1-standard-1[0m
+                        [0;36mmetadata[0m:
+                            [0;36m----------[0m
+                            [0;36mfingerprint[0m:
+                                [0;32mhJbq1ExwxNc=[0m
+                            [0;36mitems[0m:
+                                [0;36m----------[0m
+                                [0;36m- key[0m:
+                                    [0;32msalt-cloud-profile[0m
+                                [0;36m- value[0m:
+                                    [0;32mzone1b[0m
+                            [0;36mkind[0m:
+                                [0;32mcompute#metadata[0m
+                        [0;36mname[0m:
+                            [0;32mminion-2[0m
+                        [0;36mnetworkInterfaces[0m:
+                            [0;36m----------[0m
+                            [0;36m- accessConfigs[0m:
+                                [0;36m----------[0m
+                                [0;36m- kind[0m:
+                                    [0;32mcompute#accessConfig[0m
+                                [0;36m- name[0m:
+                                    [0;32mExternal NAT[0m
+                                [0;36m- natIP[0m:
+                                    [0;32m23.236.51.204[0m
+                                [0;36m- type[0m:
+                                    [0;32mONE_TO_ONE_NAT[0m
+                            [0;36m- name[0m:
+                                [0;32mnic0[0m
+                            [0;36m- network[0m:
+                                [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/global/networks/default[0m
+                            [0;36m- networkIP[0m:
+                                [0;32m10.240.103.192[0m
+                        [0;36mscheduling[0m:
+                            [0;36m----------[0m
+                            [0;36mautomaticRestart[0m:
+                                [1;33mTrue[0m
+                            [0;36monHostMaintenance[0m:
+                                [0;32mMIGRATE[0m
+                        [0;36mselfLink[0m:
+                            [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/zones/us-central1-b/instances/minion-2[0m
+                        [0;36mstatus[0m:
+                            [0;32mRUNNING[0m
+                        [0;36mtags[0m:
+                            [0;32m- minion[0m
+                            [0;32m- salt[0m
+                            [0;32m- zone1b[0m
+                        [0;36mtags_fingerprint[0m:
+                            [0;32m_A6oSxinpqg=[0m
+                        [0;36mzone[0m:
+                            [0;36m----------[0m
+                            [0;36mcountry[0m:
+                                [0;32mus[0m
+                            [0;36mdeprecated[0m:
+                                [1;33mNone[0m
+                            [0;36mdriver[0m:
+                            [0;36mextra[0m:
+                                [0;36m----------[0m
+                                [0;36mcreationTimestamp[0m:
+                                    [0;32m2014-01-21T10:30:55.290-08:00[0m
+                                [0;36mdescription[0m:
+                                    [0;32mus-central1-b[0m
+                                [0;36mselfLink[0m:
+                                    [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/zones/us-central1-b[0m
+                            [0;36mid[0m:
+                                [0;32m2264435561806081494[0m
+                            [0;36mmaintenance_windows[0m:
+                                [1;33mNone[0m
+                            [0;36mname[0m:
+                                [0;32mus-central1-b[0m
+                            [0;36mstatus[0m:
+                                [0;32mUP[0m
+                    [0;36m- id[0m:
+                        [0;32m106933875486647523[0m
+                    [0;36m- image[0m:
+                        [1;33mNone[0m
+                    [0;36m- name[0m:
+                        [0;32mminion-2[0m
+                    [0;36m- private_ips[0m:
+                        [0;32m- 10.240.103.192[0m
+                    [0;36m- public_ips[0m:
+                        [0;32m- 23.236.51.204[0m
+                    [0;36m- size[0m:
+                        [0;32mn1-standard-1[0m
+                    [0;36m- state[0m:
+                        [1;33m0[0m
+                    [0;36m----------[0m
+                    [0;36m- _uuid[0m:
+                        [1;33mNone[0m
+                    [0;36m- driver[0m:
+                    [0;36m- extra[0m:
+                        [0;36m----------[0m
+                        [0;36mdescription[0m:
+                            [1;33mNone[0m
+                        [0;36mdisks[0m:
+                            [0;36m----------[0m
+                            [0;36m- autoDelete[0m:
+                                [1;33mFalse[0m
+                            [0;36m- boot[0m:
+                                [1;33mTrue[0m
+                            [0;36m- deviceName[0m:
+                                [0;32mminion-3[0m
+                            [0;36m- index[0m:
+                                [1;33m0[0m
+                            [0;36m- kind[0m:
+                                [0;32mcompute#attachedDisk[0m
+                            [0;36m- mode[0m:
+                                [0;32mREAD_WRITE[0m
+                            [0;36m- source[0m:
+                                [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/zones/us-central1-a/disks/minion-3[0m
+                            [0;36m- type[0m:
+                                [0;32mPERSISTENT[0m
+                        [0;36mid[0m:
+                            [0;32m15923968505409770155[0m
+                        [0;36mimage[0m:
+                            [1;33mNone[0m
+                        [0;36mmachineType[0m:
+                            [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/zones/us-central1-a/machineTypes/n1-standard-1[0m
+                        [0;36mmetadata[0m:
+                            [0;36m----------[0m
+                            [0;36mfingerprint[0m:
+                                [0;32mAPVoohVy7Gw=[0m
+                            [0;36mitems[0m:
+                                [0;36m----------[0m
+                                [0;36m- key[0m:
+                                    [0;32msalt-cloud-profile[0m
+                                [0;36m- value[0m:
+                                    [0;32mzone1a[0m
+                            [0;36mkind[0m:
+                                [0;32mcompute#metadata[0m
+                        [0;36mname[0m:
+                            [0;32mminion-3[0m
+                        [0;36mnetworkInterfaces[0m:
+                            [0;36m----------[0m
+                            [0;36m- accessConfigs[0m:
+                                [0;36m----------[0m
+                                [0;36m- kind[0m:
+                                    [0;32mcompute#accessConfig[0m
+                                [0;36m- name[0m:
+                                    [0;32mExternal NAT[0m
+                                [0;36m- natIP[0m:
+                                    [0;32m23.236.49.193[0m
+                                [0;36m- type[0m:
+                                    [0;32mONE_TO_ONE_NAT[0m
+                            [0;36m- name[0m:
+                                [0;32mnic0[0m
+                            [0;36m- network[0m:
+                                [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/global/networks/default[0m
+                            [0;36m- networkIP[0m:
+                                [0;32m10.240.62.98[0m
+                        [0;36mscheduling[0m:
+                            [0;36m----------[0m
+                            [0;36mautomaticRestart[0m:
+                                [1;33mTrue[0m
+                            [0;36monHostMaintenance[0m:
+                                [0;32mMIGRATE[0m
+                        [0;36mselfLink[0m:
+                            [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/zones/us-central1-a/instances/minion-3[0m
+                        [0;36mstatus[0m:
+                            [0;32mRUNNING[0m
+                        [0;36mtags[0m:
+                            [0;32m- minion[0m
+                            [0;32m- salt[0m
+                            [0;32m- zone1a[0m
+                        [0;36mtags_fingerprint[0m:
+                            [0;32mRudqyOSZymk=[0m
+                        [0;36mzone[0m:
+                            [0;36m----------[0m
+                            [0;36mcountry[0m:
+                                [0;32mus[0m
+                            [0;36mdeprecated[0m:
+                                [1;33mNone[0m
+                            [0;36mdriver[0m:
+                            [0;36mextra[0m:
+                                [0;36m----------[0m
+                                [0;36mcreationTimestamp[0m:
+                                    [0;32m2014-01-21T10:30:55.288-08:00[0m
+                                [0;36mdescription[0m:
+                                    [0;32mus-central1-a[0m
+                                [0;36mselfLink[0m:
+                                    [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/zones/us-central1-a[0m
+                            [0;36mid[0m:
+                                [0;32m8033219919959725955[0m
+                            [0;36mmaintenance_windows[0m:
+                                [1;33mNone[0m
+                            [0;36mname[0m:
+                                [0;32mus-central1-a[0m
+                            [0;36mstatus[0m:
+                                [0;32mUP[0m
+                    [0;36m- id[0m:
+                        [0;32m15923968505409770155[0m
+                    [0;36m- image[0m:
+                        [1;33mNone[0m
+                    [0;36m- name[0m:
+                        [0;32mminion-3[0m
+                    [0;36m- private_ips[0m:
+                        [0;32m- 10.240.62.98[0m
+                    [0;36m- public_ips[0m:
+                        [0;32m- 23.236.49.193[0m
+                    [0;36m- size[0m:
+                        [0;32mn1-standard-1[0m
+                    [0;36m- state[0m:
+                        [1;33m0[0m
+                    [0;36m----------[0m
+                    [0;36m- _uuid[0m:
+                        [1;33mNone[0m
+                    [0;36m- driver[0m:
+                    [0;36m- extra[0m:
+                        [0;36m----------[0m
+                        [0;36mdescription[0m:
+                            [1;33mNone[0m
+                        [0;36mdisks[0m:
+                            [0;36m----------[0m
+                            [0;36m- autoDelete[0m:
+                                [1;33mFalse[0m
+                            [0;36m- boot[0m:
+                                [1;33mTrue[0m
+                            [0;36m- deviceName[0m:
+                                [0;32mminion-4[0m
+                            [0;36m- index[0m:
+                                [1;33m0[0m
+                            [0;36m- kind[0m:
+                                [0;32mcompute#attachedDisk[0m
+                            [0;36m- mode[0m:
+                                [0;32mREAD_WRITE[0m
+                            [0;36m- source[0m:
+                                [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/zones/us-central1-b/disks/minion-4[0m
+                            [0;36m- type[0m:
+                                [0;32mPERSISTENT[0m
+                        [0;36mid[0m:
+                            [0;32m8670746928536279379[0m
+                        [0;36mimage[0m:
+                            [1;33mNone[0m
+                        [0;36mmachineType[0m:
+                            [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/zones/us-central1-b/machineTypes/n1-standard-1[0m
+                        [0;36mmetadata[0m:
+                            [0;36m----------[0m
+                            [0;36mfingerprint[0m:
+                                [0;32mhJbq1ExwxNc=[0m
+                            [0;36mitems[0m:
+                                [0;36m----------[0m
+                                [0;36m- key[0m:
+                                    [0;32msalt-cloud-profile[0m
+                                [0;36m- value[0m:
+                                    [0;32mzone1b[0m
+                            [0;36mkind[0m:
+                                [0;32mcompute#metadata[0m
+                        [0;36mname[0m:
+                            [0;32mminion-4[0m
+                        [0;36mnetworkInterfaces[0m:
+                            [0;36m----------[0m
+                            [0;36m- accessConfigs[0m:
+                                [0;36m----------[0m
+                                [0;36m- kind[0m:
+                                    [0;32mcompute#accessConfig[0m
+                                [0;36m- name[0m:
+                                    [0;32mExternal NAT[0m
+                                [0;36m- natIP[0m:
+                                    [0;32m173.255.115.211[0m
+                                [0;36m- type[0m:
+                                    [0;32mONE_TO_ONE_NAT[0m
+                            [0;36m- name[0m:
+                                [0;32mnic0[0m
+                            [0;36m- network[0m:
+                                [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/global/networks/default[0m
+                            [0;36m- networkIP[0m:
+                                [0;32m10.240.242.54[0m
+                        [0;36mscheduling[0m:
+                            [0;36m----------[0m
+                            [0;36mautomaticRestart[0m:
+                                [1;33mTrue[0m
+                            [0;36monHostMaintenance[0m:
+                                [0;32mMIGRATE[0m
+                        [0;36mselfLink[0m:
+                            [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/zones/us-central1-b/instances/minion-4[0m
+                        [0;36mstatus[0m:
+                            [0;32mRUNNING[0m
+                        [0;36mtags[0m:
+                            [0;32m- minion[0m
+                            [0;32m- salt[0m
+                            [0;32m- zone1b[0m
+                        [0;36mtags_fingerprint[0m:
+                            [0;32m_A6oSxinpqg=[0m
+                        [0;36mzone[0m:
+                            [0;36m----------[0m
+                            [0;36mcountry[0m:
+                                [0;32mus[0m
+                            [0;36mdeprecated[0m:
+                                [1;33mNone[0m
+                            [0;36mdriver[0m:
+                            [0;36mextra[0m:
+                                [0;36m----------[0m
+                                [0;36mcreationTimestamp[0m:
+                                    [0;32m2014-01-21T10:30:55.290-08:00[0m
+                                [0;36mdescription[0m:
+                                    [0;32mus-central1-b[0m
+                                [0;36mselfLink[0m:
+                                    [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/zones/us-central1-b[0m
+                            [0;36mid[0m:
+                                [0;32m2264435561806081494[0m
+                            [0;36mmaintenance_windows[0m:
+                                [1;33mNone[0m
+                            [0;36mname[0m:
+                                [0;32mus-central1-b[0m
+                            [0;36mstatus[0m:
+                                [0;32mUP[0m
+                    [0;36m- id[0m:
+                        [0;32m8670746928536279379[0m
+                    [0;36m- image[0m:
+                        [1;33mNone[0m
+                    [0;36m- name[0m:
+                        [0;32mminion-4[0m
+                    [0;36m- private_ips[0m:
+                        [0;32m- 10.240.242.54[0m
+                    [0;36m- public_ips[0m:
+                        [0;32m- 173.255.115.211[0m
+                    [0;36m- size[0m:
+                        [0;32mn1-standard-1[0m
+                    [0;36m- state[0m:
+                        [1;33m0[0m
+                [0;36mregion[0m:
+                    [0;36m----------[0m
+                    [0;36m_uuid[0m:
+                        [1;33mNone[0m
+                    [0;36mdeprecated[0m:
+                        [1;33mNone[0m
+                    [0;36mdriver[0m:
+                    [0;36mextra[0m:
+                        [0;36m----------[0m
+                        [0;36mcreationTimestamp[0m:
+                            [0;32m2014-01-21T10:30:54.895-08:00[0m
+                        [0;36mdescription[0m:
+                            [0;32mus-central1[0m
+                        [0;36mselfLink[0m:
+                            [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/regions/us-central1[0m
+                    [0;36mid[0m:
+                        [0;32m18201118976141502843[0m
+                    [0;36mname[0m:
+                        [0;32mus-central1[0m
+                    [0;36mquotas[0m:
+                        [0;36m----------[0m
+                        [0;36m- limit[0m:
+                            [1;33m1050.0[0m
+                        [0;36m- metric[0m:
+                            [0;32mCPUS[0m
+                        [0;36m- usage[0m:
+                            [1;33m7.0[0m
+                        [0;36m----------[0m
+                        [0;36m- limit[0m:
+                            [1;33m10000.0[0m
+                        [0;36m- metric[0m:
+                            [0;32mDISKS_TOTAL_GB[0m
+                        [0;36m- usage[0m:
+                            [1;33m70.0[0m
+                        [0;36m----------[0m
+                        [0;36m- limit[0m:
+                            [1;33m10.0[0m
+                        [0;36m- metric[0m:
+                            [0;32mSTATIC_ADDRESSES[0m
+                        [0;36m- usage[0m:
+                            [1;33m0.0[0m
+                        [0;36m----------[0m
+                        [0;36m- limit[0m:
+                            [1;33m1050.0[0m
+                        [0;36m- metric[0m:
+                            [0;32mIN_USE_ADDRESSES[0m
+                        [0;36m- usage[0m:
+                            [1;33m7.0[0m
+                    [0;36mstatus[0m:
+                        [0;32mUP[0m
+                    [0;36mzones[0m:
+                        [0;32m- us-central1-a[0m
+                        [0;32m- us-central1-b[0m
+        [0;36mid[0m:
+            [0;32m15230868975167713969[0m
+        [0;36mip[0m:
+            [0;32m107.178.208.60[0m
+        [0;36mname[0m:
+            [0;32msalt-lb[0m
+        [0;36mport[0m:
+            [0;32m80-80[0m
+        [0;36mstate[0m:
+            [1;33mNone[0m
+
+# * let's         # Let's record the public IP fo  of the load-balancer in pur       our cut/paste buffer
+# 
+# # Now lets 's create a firewall rule to allow HTTP traffice
+# salt-cloud -f create_fwrule gce name=salt-allow-http \
+> network=default allow=tcp:80
+[INFO    ] salt-cloud starting
+[0;36mgce-config[0m:
+    [0;36m----------[0m
+    [0;36mgce[0m:
+        [0;36m----------[0m
+        [0;36m_uuid[0m:
+            [1;33mNone[0m
+        [0;36mallowed[0m:
+            [0;36m----------[0m
+            [0;36m- IPProtocol[0m:
+                [0;32mtcp[0m
+            [0;36m- ports[0m:
+                [0;32m- 80[0m
+        [0;36mdriver[0m:
+        [0;36mextra[0m:
+            [0;36m----------[0m
+            [0;36mcreationTimestamp[0m:
+                [0;32m2014-06-23T09:28:49.994-07:00[0m
+            [0;36mdescription[0m:
+                [1;33mNone[0m
+            [0;36mnetwork_name[0m:
+                [0;32mdefault[0m
+            [0;36mselfLink[0m:
+                [0;32mhttps://www.googleapis.com/compute/v1/projects/graphite-demos/global/firewalls/salt-allow-http[0m
+        [0;36mid[0m:
+            [0;32m8619921235377557808[0m
+        [0;36mname[0m:
+            [0;32msalt-allow-http[0m
+        [0;36mnetwork[0m:
+        [0;36msource_ranges[0m:
+            [0;32m- 0.0.0.0/0[0m
+        [0;36msource_tags[0m:
+            [1;33mNone[0m
+
+# 
+# Ok, let's test it out by sending some HTTP requests to the LB IP
+> 
+> '
+-bash: Ok,: command not found
+# 
+# while [ 1 ]; do curl -sL http://107.178.208.60/ | grep \<title; sleep .5; done [A# while [ 1 ]; do curl -sL http://107.178.208.60/ | grep \<title; sleep .5; don[Ke
+  <title>minion-4</title>
+  <title>minion-4</title>
+  <title>minion-4</title>
+^C
+# while [ 1 ]; do curl -sL http://107.178.208.60/ | grep \<title; sleep .5; done [A 
+
+  <title>minion-1</title>
+  <title>minion-4</title>
+  <title>minion-2</title>
+  <title>minion-1</title>
+  <title>minion-4</title>
+  <title>minion-2</title>
+  <title>minion-4</title>
+  <title>minion-4</title>
+  <title>minion-3</title>
+  <title>minion-3</title>
+  <title>minion-1</title>
+  <title>minion-4</title>
+  <title>minion-3</title>
+  <title>minion-2</title>
+  <title>minion-1</title>
+^C
+# # Great, that worked!            you can see i that the demo worked gre   fl   .  Thanks for watching!
+# exit
+logout
+$ exit
+exit
+
+Script done on Mon Jun 23 16:30:43 2014

@@ -1,0 +1,55 @@
+  # This screencast demonstrates how you can use SaltStack and Google Compute
+  # Engine. Everything you need to repeat this demo can be found at,
+  # https://github.com/GoogleCloudPlatform/compute-video-demo-salt
+  #
+  # We'll use the SaltStack's 'salt-cloud' utility to create 4 virtual
+  # machines, a load-balancer, and open up a firewall rule for HTTP traffic.
+  # The new virtual machines will be bootstrapped into our Salt environment
+  # and we'll also install Apache on each one along with a custom web page.
+  # 
+  # We assume you have already set up your Google Cloud Platform project,
+  # installed a salt master and set up the required authorization files
+  # as instructed in the demo repo's README.
+  #
+  # This screencast picks up at the "Demo time!" section of the README.  As
+  # such, we are now logged into our configured salt master and are ready to
+  # proceed. Note that if your salt master's short hostname is not 'salt',
+  # you will need to edit the /etc/salt/cloud.profiles file to set the
+  # correct name of your salt master.
+  #
+  # Note that you will need to be the 'root' user for the demo.
+  sudo -i
+
+  # We can make sure we have no existing minions by looking at the list of
+  # authorized keys
+  salt-key -L
+
+  # Now create all 4 VMs in parallel,
+  salt-cloud -P -m /etc/salt/demo.mp
+
+  # We can use Salt's remote execution to make sure all instances were
+  # created and bootstrapped as salt minions,
+  salt '*' cmd.run "uname -a"
+
+  # Now let's use salt's state system to deploy Apache and a custom site
+  # page to each minion,
+  salt '*' state.highstate
+
+  # But we want to distrubte HTTP requests across all 4 VMs. Let's create a
+  # Compute Engine load-balancer for that,
+  salt-cloud -f create_lb gce name=salt-lb region=us-central1 \
+  ports=80 members=minion-1,minion-2,minion-3,minion-4
+
+  # To allow HTTP traffic, we'll use the salt-cloud utility to send a
+  # request to the Compute Engine API
+  salt-cloud -f create_fwrule gce name=salt-allow-http \
+  network=default allow=tcp:80
+
+  # The next step is to use the load-balancer IP to see if each instance is
+  # able to respond
+  ip=$(gcloud compute forwarding-rules get chef-demo-fr | grep IPAddress | awk '{print $2}')
+  while [ 1 ]; do curl -sL http://$ip/ | grep \<title; sleep .5; done
+  
+  # Success!
+  exit
+

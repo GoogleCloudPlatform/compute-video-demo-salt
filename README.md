@@ -114,7 +114,7 @@ code into your terminal.
 this gcutil ssh command, go ahead and log back out. The full output will look
 similar to,
     ```
-    root@salt:~# gcutil ssh --ssh_key_push_wait_time=30 --permit_root_ssh $(hostname -s)
+    root@salt:~# gcloud auth login
     Service account scopes are not enabled for default on this instance. Using manual authentication.
     Go to the following link in your browser:
 
@@ -122,6 +122,11 @@ similar to,
 
     Enter verification code: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     Authentication successful.
+    ```
+   You should set the default project with `gcloud config set project` when
+   prompted.  Next, use `gcutil ssh` to create your Compute Engine SSH keys.
+    ```
+    root@salt:~# gcutil ssh --ssh_key_push_wait_time=30 --permit_root_ssh $(hostname -s)
     INFO: Zone for salt detected as us-central1-b.
     WARNING: You don't have an ssh key for Google Compute Engine. Creating one now...
     Enter passphrase (empty for no passphrase): 
@@ -186,6 +191,9 @@ You've now completed all of the necessary setup to replicate the demo as
 shown on the video. Now, you'll use `salt-cloud` to create and bootstrap
 the minions, install Apache, and set up a Compute Engine load-balancer.
 
+You can also watch a replay of this terminal session at
+http://asciinema.org/a/10422
+
 ## Create Minions
 
 Use the `salt-cloud` command to create the Salt minions based on the
@@ -213,14 +221,14 @@ salt '*' cmd.run "uname -a"
 You should see something very similar to,
 
 ```
-myinstance1:
-    Linux myinstance1 3.2.0-4-amd64 #1 SMP Debian 3.2.51-1 x86_64 GNU/Linux
-myinstance2:
-    Linux myinstance2 3.2.0-4-amd64 #1 SMP Debian 3.2.51-1 x86_64 GNU/Linux
-myinstance4:
-    Linux myinstance4 3.2.0-4-amd64 #1 SMP Debian 3.2.51-1 x86_64 GNU/Linux
-myinstance3:
-    Linux myinstance3 3.2.0-4-amd64 #1 SMP Debian 3.2.51-1 x86_64 GNU/Linux
+minion-1:
+    Linux minion-1 3.2.0-4-amd64 #1 SMP Debian 3.2.51-1 x86_64 GNU/Linux
+minion-2:
+    Linux minion-2 3.2.0-4-amd64 #1 SMP Debian 3.2.51-1 x86_64 GNU/Linux
+minion-4:
+    Linux minion-4 3.2.0-4-amd64 #1 SMP Debian 3.2.51-1 x86_64 GNU/Linux
+minion-3:
+    Linux minion-3 3.2.0-4-amd64 #1 SMP Debian 3.2.51-1 x86_64 GNU/Linux
 ```
 
 ## Minion configuration
@@ -267,7 +275,7 @@ you specify the correct `region` where your instances reside (this is likely
 `us-central1` if you've used all of the default files in this repository.
 This command should take around 10-15 seconds to complete.
     ```
-    salt-cloud -f create_lb gce name=lb region=us-central1 ports=80 members=myinstance1,myinstance2,myinstance3,myinstance4
+    salt-cloud -f create_lb gce name=lb region=us-central1 ports=80 members=minion-1,minion-2,minion-3,minion-4
     ```
 
 1. The output from this command will display the public IP address associated
@@ -324,7 +332,7 @@ salt-cloud -f delete_lb gce name=lb
   salt-minion processes are fully terminated and restarted cleanly,
 
     ```
-    for m in myinstance{1..4}
+    for m in minion{1..4}
     do
         gcutil ssh --permit_root_ssh $m /etc/init.d/salt-minion stop
         gcutil ssh --permit_root_ssh $m pkill salt-minion
