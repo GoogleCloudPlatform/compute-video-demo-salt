@@ -1,0 +1,172 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="description" content="A front-end template that helps you build fast, modern mobile web apps.">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <title>DevOps::SaltStack</title>
+
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Web Starter Kit">
+
+    <!-- iOS icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/touch/apple-touch-icon-144x144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/touch/apple-touch-icon-114x114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/touch/apple-touch-icon-72x72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="images/touch/apple-touch-icon-57x57-precomposed.png">
+
+    <!-- Tile icon for Win8 (144x144 + tile color) -->
+    <meta name="msapplication-TileImage" content="images/touch/ms-touch-icon-144x144-precomposed.png">
+    <meta name="msapplication-TileColor" content="#3372DF">
+
+    <!-- Generic Icon -->
+    <link rel="shortcut icon" href="images/touch/touch-icon-57x57.png">
+
+    <!-- SEO: If mobile URL is different from desktop URL, add a canonical link to the desktop page https://developers.google.com/webmasters/smartphone-sites/feature-phones -->
+    <!--
+    <link rel="canonical" href="http://www.example.com/">
+    -->
+
+    <!-- Chrome Add to Homescreen -->
+    <link rel="shortcut icon" sizes="196x196" href="images/touch/touch-icon-196x196.png">
+
+    <!-- build:css styles/components/main.min.css -->
+    <link rel="stylesheet" href="styles/h5bp.css">
+    <link rel="stylesheet" href="styles/components/components.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <!-- endbuild -->
+  </head>
+  <body>
+    <header class="app-bar promote-layer">
+      <div class="app-bar-container">
+        <button class="menu"><img src="images/hamburger.svg" alt="menu"></button>
+        <div class="g-medium-full">
+          <p class="logo">
+            <img height="60" style="max-width:auto;" src="images/gcp.png" />
+            DevOps::SaltStack
+          </p>
+        </div>
+        <section class="app-bar-actions">
+        <!-- Put App Bar Buttons Here -->
+        </section>
+      </div>
+    </header>
+
+    <nav class="navdrawer-container promote-layer">
+      <h4>Navigation</h4>
+      <ul>
+        <li><a href="http://googlecloudplatform.github.io/compute-video-demo-main/">DevOps Power Tools</a></li>
+        <li><a href="http://googlecloudplatform.github.io/compute-video-demo-puppet/">Puppet</a></li>
+        <li><a href="http://googlecloudplatform.github.io/compute-video-demo-chef/">Chef</a></li>
+        <li><a href="http://googlecloudplatform.github.io/compute-video-demo-salt/">SaltStack</a></li>
+        <li><a href="http://googlecloudplatform.github.io/compute-video-demo-ansible/">Ansible</a></li>
+      </ul>
+    </nav>
+
+    <main>
+      <br />
+      <div class="g-wide--1 g-medium--half">
+        <img height="100" style="max-width:auto;" src="images/saltstack.png" />
+        <ul class="list-links list-links--primary">
+          <li class="list__item"><a href="http://docs.saltstack.com/en/latest/">Documentation</a>
+          <li class="list__item"><a href="http://www.saltstack.com/enterprise/">SaltStack Enterprise</a>
+        </ul>
+        <h3>Google+SaltStack</h3>
+        <ul class="list-links list-links--primary">
+          <li class="list__item"><a href="http://docs.saltstack.com/en/latest/topics/cloud/gce.html">salt-cloud</a>
+        </ul>
+        <h3>Demos</h3>
+        <ul class="list-links list-links--primary">
+          <li class="list__item"><a href="https://www.youtube.com/watch?v=0dOXbhenFl0">Demo Video</a>
+          <li class="list__item"><a href="https://github.com/GoogleCloudPlatform/compute-video-demo-salt">Demo Code</a>
+        </ul>
+        <br />
+      </div>
+      <div class="g-wide--3 g-wide--last g-medium--half g--last">
+        <p class="medium">Demo: SaltStack and Google Compute Engine</p>
+        <script type="text/javascript" src="https://asciinema.org/a/10422.js" id="asciicast-10422" async data-autoplay="1"></script>
+      </div>
+
+      <div class="g-medium--full g-wide--full">
+        <hr />
+      </div>
+
+      <div class="g-medium--full g-wide--full">
+        <h3>Example: Install Apache</h3>
+        <div class="highlight-module highlight-module--code highlight-module--right">
+          <div class="highlight-module__container">
+            <code class="yaml">
+              <div class="highlight">
+                <pre>
+ 1 apache:
+ 2   pkg:
+ 3     - installed
+ 4   service:
+ 5     - running
+ 6     - enable: True
+ 7     - require:
+ 8       - pkg: apache
+ 9 
+10 /var/www/index.html:
+11   file:
+12     - managed
+13     - source: salt://index.html
+14     - require:
+15       - pkg: apache
+                </pre>
+              </div>
+            </code>
+          </div>
+        </div>
+      </div>
+
+      <div class="g-medium--full g-wide--full">
+        <hr />
+      </div>
+      
+      <div class="g-medium--full g-wide--full">
+        <h3>Example: Create a Compute Engine instance</h3>
+        <div class="highlight-module highlight-module--code highlight-module--right">
+          <div class="highlight-module__container">
+            <code class="shell">
+              <div class="highlight">
+                <pre>
+## /etc/salt/cloud.profiles
+ 1  my_minions:
+ 2    minion:
+ 3      master: salt
+ 4    image: debian-7
+ 5    size: n1-standard-1
+ 6    location: us-central1-a
+ 7    make_master: False
+ 8    deploy: True
+ 9    delete_boot_pd: True
+10    tags: '["google-io", "salt"]'
+11    provider: gce-config
+
+## /etc/salt/demo.map
+ 1 my_minions:
+ 2   - minion1
+ 3   - minion2
+
+## create minions with salt-cloud like this,
+salt-cloud -P -m /etc/salt/demo.map
+                </pre>
+              </div>
+            </code>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- build:js scripts/main.min.js -->
+    <script src="scripts/main.js"></script>
+    <!-- endbuild -->
+
+  </body>
+</html>
