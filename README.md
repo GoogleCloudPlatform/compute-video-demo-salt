@@ -38,15 +38,11 @@ before you can create any virtual machines with Compute Engine. Look for the
 *Billing* link in the left-hand navigation bar.
 
 1. In order for `salt-cloud` to create Compute Engine instances, you'll need a
-[Service Account](https://developers.google.com/console/help/#service_accounts)
-created for the appropriate authorization. Navigate to
-*APIs &amp; auth -&gt; Credentials* and under the OAuth section,
-*Create New Client ID*. Make sure to select *Service Account*. Google will
-generate a new private key and prompt you to save the file and let you know
-that it was created with the *notasecret* passphrase. Once you save the key
-file, make sure to record the *Email address* that ends with
-`@developer.gserviceaccount.com` since this will be required in the Salt
-configuration files.
+[Service Account](https://developers.google.com/console/help/new/#serviceaccounts)
+Make sure to download (or generate a new) PKCS12 formatted private key file
+for your Service Account. Also, make sure to record the *Email address* that
+ends with `@developer.gserviceaccount.com` since this will be required in the
+Salt configuration files.
 
 1. Next you will want to install the [Cloud SDK](https://developers.google.com/cloud/sdk/)
 and make sure you've successfully authenticated and set your default project
@@ -56,26 +52,36 @@ as instructed.
 
 Next you will create a Virtual Machine for your Salt Master named `salt` so
 that your managed nodes (or minions) will be able to automatcially find the
-master.
+master. When creating your Master, make sure to enable the `compute` scope
+for *read/write* authorization.
 
 You can create the master in the
 [Developers Console](https://console.developers.google.com/)  under the
 *Compute Engine -&gt; VM Instances* section and then click the *NEW INSTANCE*
-button.
+button. You may need to toggle the `Show Advanced Options` link to set the
+`compute` scope for your new Master.
 
-Or, you can create the Salt master either with the `gcutil` command-line
-utility (part of the Cloud SDK) with the following command:
+Or, you can create the Salt master either with the `gcloud` command-line
+utility (part of the Cloud SDK) with the following commands:
 
 ```
-# Make sure to use a Debian-7-wheezy image for this demo
-gcutil addinstance salt --image=debian-7 --zone=us-central1-b --machine_type=n1-standard-1
+# First, find the most recent Debian-7 image
+gcloud compute images list --regexp ^deb.*
+NAME                      PROJECT      DEPRECATED STATUS
+debian-7-wheezy-v20140814 debian-cloud            READY
+
+# Now create the instance with the proper scope
+gcloud compute instances create salt --scopes https://www.googleapis.com/auth/compute --image debian-7-wheezy-v20140814 --image-project debian-cloud --zone us-central1 -b --machine-type n1-standard-1
+Created [https://www.googleapis.com/compute/v1/projects/YOUR-PROJECT/zones/us-central1-b/instances/salt].
+NAME ZONE          MACHINE_TYPE  INTERNAL_IP    EXTERNAL_IP     STATUS
+salt us-central1-b n1-standard-1 10.240.136.204 123.45.67.89    RUNNING
 ```
 
 ## Software
 
 1. SSH to your Salt master and then become root
     ```
-    gcutil ssh salt
+    gcloud compute ssh salt --zone us-central1-b
     sudo -i
     ```
 
@@ -102,40 +108,38 @@ gcutil addinstance salt --image=debian-7 --zone=us-central1-b --machine_type=n1-
     ```
 
 1. Create a Compute Engine SSH key and upload it to the metadata server.
-The easist way to do this is to use the gcutil command-line utility and
-try to SSH from the machine back into itself.  Since you are using the root
-account, you need an additional flag.
-
-    Cut/paste the generated URL into a browser that is authenticated with your
-Google account. Accept the OAuth permissions and cut/paste the verification
-code into your terminal.
+The easist way to do this is to use the `gcloud` command-line utility and
+try to SSH from the machine back into itself.
 
     When prompted, use an Empty Passphrase for the demo. Once logged in through
 this gcutil ssh command, go ahead and log back out. The full output will look
 similar to,
     ```
-    root@salt:~# gcloud auth login
-    Service account scopes are not enabled for default on this instance. Using manual authentication.
-    Go to the following link in your browser:
-
-        https://accounts.google.com/o/oauth2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcompute+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdevstorage.full_control+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&redirect_uri=urn%3Aietf%3Awg%3Aoauth%3A2.0%3Aoob&response_type=code&client_id=1111111111111.apps.googleusercontent.com&access_type=offline
-
-    Enter verification code: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-    Authentication successful.
-    ```
-   You should set the default project with `gcloud config set project` when
-   prompted.  Next, use `gcutil ssh` to create your Compute Engine SSH keys.
-    ```
-    root@salt:~# gcutil ssh --ssh_key_push_wait_time=30 --permit_root_ssh $(hostname -s)
-    INFO: Zone for salt detected as us-central1-b.
-    WARNING: You don't have an ssh key for Google Compute Engine. Creating one now...
+    root@salt:~# gcloud compute ssh salt --zone us-central1-b
+    WARNING: You do not have an SSH key for Google Compute Engine.
+    WARNING: [/usr/bin/ssh-keygen] will be executed to generate a key.
+    Generating public/private rsa key pair.
     Enter passphrase (empty for no passphrase): 
     Enter same passphrase again: 
-    INFO: Updated project with new ssh key. It can take several minutes for the instance to pick up the key.
-    INFO: Waiting 30 seconds before attempting to connect.
-    INFO: Running command line: ssh -o UserKnownHostsFile=/dev/null -o CheckHostIP=no -o StrictHostKeyChecking=no -i /root/.ssh/google_compute_engine -A -p 22 root@123.45.67.89 --
-    Warning: Permanently added '123.45.67.89' (ECDSA) to the list of known hosts.
-    Linux salt 3.2.0-4-amd64 #1 SMP Debian 3.2.51-1 x86_64
+    Your identification has been saved in /root/.ssh/google_compute_engine.
+    Your public key has been saved in /root/.ssh/google_compute_engine.pub.
+    The key fingerprint is:
+    00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:01 root@salt
+    The key's randomart image is:
+    +--[ RSA 2048]----+
+    | x=       o=B+o =|
+    |         . ooB * |
+    |  9       o . =  |
+    |     +   .   o   |
+    |    o o S     .  |
+    |       +     . . |
+    |   . . ...    E  |
+    |  =         *o   |
+    |   AE.           |
+    +-----------------+
+    Updated [https://www.googleapis.com/compute/v1/projects/YOUR-PROJECT].
+    Warning: Permanently added '100.170.210.204' (ECDSA) to the list of known hosts.
+    Linux salt 3.2.0-4-amd64 #1 SMP Debian 3.2.60-1+deb7u3 x86_64
 
     The programs included with the Debian GNU/Linux system are free software;
     the exact distribution terms for each program are described in the
@@ -145,16 +149,14 @@ similar to,
     permitted by applicable law.
     root@salt:~# exit
     logout
-    Connection to 123.48.67.89 closed.
-    WARNING: There is a new version of gcutil available. Go to: https://developers.google.com/compute/docs/gcutil
-    WARNING: Your version of gcutil is 1.12.0, the latest version is 1.13.0.
+    Connection to 107.178.218.254 closed.
     root@salt:~# 
     ```
 
-## Salt-Cloud setup
+## Salt-Cloud and Demo Setup
 
-1. Check out this repository so that you can use pre-canned configuration
-and demo files.
+1. For the Demo, check out this repository so that you can use pre-canned
+configuration and demo files.
     ```
     cd $HOME
     git clone https://github.com/GoogleCloudPlatform/compute-video-demo-salt
@@ -167,22 +169,31 @@ to customize them with your credentials.
     cp -R ~/compute-video-demo-salt/etc/* /etc
     ```
 
-1. You will need to convert the Service Account private key file from the
-PKCS12 format to the RSA/PEM file format.  You can do that with the `openssl`
-utility,
+1. Now copy over the demo state files that configure each minion.
     ```
-    openssl pkcs12 -in /path/to/original/key.p12 -passin pass:notasecret -nodes -nocerts | openssl rsa -out /etc/salt/pkey.pem
+    cp -R ~/compute-video-demo-salt/srv/* /srv
     ```
 
-1. Edit the `/etc/salt/cloud` file and specify set your Project ID in the
-`project` parameter and also set your `service_account_email_address`. Note
+1. Now you will need to get a copy of your private Service Account key
+uploaded to your `salt` master in the proper format.  Once uploaded, you can
+convert the Service Account private key file from the PKCS12 format to the
+RSA/PEM file format.  You can do that with the `openssl` utility,
+    ```
+    openssl pkcs12 -in /path/to/original/key.p12 -passin pass:notasecret -nodes -nocerts | openssl rsa -out /etc/salt/pkey.pem
+
+    # Since this is your private key, you should set appropriate permissions
+    chmod 600 /etc/salt/pkey.pem
+    ```
+
+1. Lastly, edit the `/etc/salt/cloud` file and specify set your Project ID in
+the `project` parameter and also set your `service_account_email_address`. Note
 that if you used an alternate location for your converted Service Account key,
 make sure to also adjust the `service_account_private_key` variable.
 
-1. Now that `salt-cloud` is configured, you'll need to copy over the demo
-state files that configure each minion.
+1. You can verify that everything is working by using a standard `salt-cloud`
+command to list Compute Engine zones (e.g. locations) with,
     ```
-    cp -R ~/compute-video-demo-salt/srv/* /srv
+    salt-cloud --list-locations gce
     ```
 
 # Demo time!
