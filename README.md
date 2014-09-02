@@ -59,10 +59,11 @@ You can create the master in the
 [Developers Console](https://console.developers.google.com/)  under the
 *Compute Engine -&gt; VM Instances* section and then click the *NEW INSTANCE*
 button. You may need to toggle the `Show Advanced Options` link to set the
-`compute` scope for your new Master.
+`compute` *read/write* scope for your new Master.
 
-Or, you can create the Salt master either with the `gcloud` command-line
-utility (part of the Cloud SDK) with the following commands:
+Or, you can create the Salt master with the `gcloud` command-line utility
+(part of the Cloud SDK) from your local workstation with the following
+commands:
 
 ```
 # First, find the most recent Debian-7 image
@@ -99,10 +100,10 @@ salt us-central1-b n1-standard-1 10.240.136.204 123.45.67.89    RUNNING
 1. Install salt (v2014.1.4 or greater)
     ```
     curl -o salt_install.sh -L http://bootstrap.saltstack.org
-    sh salt_install.sh -M -N git v2014.1.4
+    sh salt_install.sh -M -N git v2014.1.10
 
-    # v2014.1.4 is missing some GCE capabilities so let's copy a version
-    # from 'develop' known to work with v2014.1.4 and replace the module
+    # v2014.1.x is missing some GCE capabilities so let's copy a version
+    # from 'develop' known to work with v2014.1.10 and replace the module
     wget https://github.com/saltstack/salt/raw/d99e639411d85fd26f3f120b3266106d61026ea4/salt/cloud/clouds/gce.py
     cp gce.py /usr/lib/python2.7/dist-packages/salt/cloud/clouds/gce.py
     ```
@@ -112,7 +113,7 @@ The easist way to do this is to use the `gcloud` command-line utility and
 try to SSH from the machine back into itself.
 
     When prompted, use an Empty Passphrase for the demo. Once logged in through
-this gcutil ssh command, go ahead and log back out. The full output will look
+this gcloud ssh command, go ahead and log back out. The full output will look
 similar to,
     ```
     root@salt:~# gcloud compute ssh salt --zone us-central1-b
@@ -345,9 +346,9 @@ salt-cloud -f delete_lb gce name=lb
     ```
     for m in minion{1..4}
     do
-        gcutil ssh --permit_root_ssh $m /etc/init.d/salt-minion stop
-        gcutil ssh --permit_root_ssh $m pkill salt-minion
-        gcutil ssh --permit_root_ssh $m /etc/init.d/salt-minion start
+        gcloud compute ssh $m --zone us-central1-b --command "/etc/init.d/salt-minion stop"
+        gcloud compute ssh $m --zone us-central1-b --command "pkill salt-minion"
+        gcloud compute ssh $m --zone us-central1-b --command "/etc/init.d/salt-minion start"
     done
     ```
 
