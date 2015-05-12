@@ -39,14 +39,14 @@ before you can create any virtual machines with Compute Engine. Look for the
 
 1. In order for `salt-cloud` to create Compute Engine instances, you'll need a
 [Service Account](https://developers.google.com/console/help/new/#serviceaccounts)
-Make sure to download (or generate a new) PKCS12 formatted private key file
+Make sure to download (or generate a new) P12 formatted private key file
 for your Service Account. Also, make sure to record the *Email address* that
 ends with `@developer.gserviceaccount.com` since this will be required in the
 Salt configuration files.
 
-1. Next you will want to install the [Cloud SDK](https://developers.google.com/cloud/sdk/)
-and make sure you've successfully authenticated and set your default project
-as instructed.
+1. Next you will want to install the
+[Cloud SDK](https://developers.google.com/cloud/sdk/) and make sure you've
+successfully authenticated and set your default project as instructed.
 
 ## Create the Salt Master Compute Engine instance
 
@@ -57,22 +57,17 @@ for *read/write* authorization.
 
 You can create the master in the
 [Developers Console](https://console.developers.google.com/)  under the
-*Compute Engine -&gt; VM Instances* section and then click the *NEW INSTANCE*
-button. You may need to toggle the `Show Advanced Options` link to set the
-`compute` *read/write* scope for your new Master.
+*Compute Engine -&gt; VM Instances* section and then click the *New instance*
+button. You may explore around the form to find the appropriate section for
+setting the `compute` *read/write* scope for your new Master.
 
 Or, you can create the Salt master with the `gcloud` command-line utility
 (part of the Cloud SDK) from your local workstation with the following
 commands:
 
 ```
-# First, find the most recent Debian-7 image
-gcloud compute images list --regexp ^deb.*
-NAME                      PROJECT      DEPRECATED STATUS
-debian-7-wheezy-v20140814 debian-cloud            READY
-
-# Now create the instance with the proper scope
-gcloud compute instances create salt --scopes https://www.googleapis.com/auth/compute --image debian-7-wheezy-v20140814 --image-project debian-cloud --zone us-central1 -b --machine-type n1-standard-1
+# Create the instance with the proper scope
+gcloud compute instances create salt --scopes https://www.googleapis.com/auth/compute --image debian-7 --image-project debian-cloud --zone us-central1 -b --machine-type n1-standard-1
 Created [https://www.googleapis.com/compute/v1/projects/YOUR-PROJECT/zones/us-central1-b/instances/salt].
 NAME ZONE          MACHINE_TYPE  INTERNAL_IP    EXTERNAL_IP     STATUS
 salt us-central1-b n1-standard-1 10.240.136.204 123.45.67.89    RUNNING
@@ -329,28 +324,6 @@ salt-cloud -d -m /etc/salt/demo.map
 salt-cloud -f delete_fwrule gce name=allow-http
 salt-cloud -f delete_lb gce name=lb
 ```
-
-## Troubleshooting
-
-* Make sure you have the latest libcloud (the `pip` install is probably best) and
-  [`gce.py`](https://github.com/saltstack/salt/blob/develop/salt/cloud/clouds/gce.py)
-  provider installed.
-
-* Minions not updating: In some rare cases, the bootstrapped minions may not
-  come up in a clean state. You can usually verify this if you try the ping
-  test and see missing or extra minions (e.g. `salt '*' test.ping`). If this
-  happens, the easiest thing to do is to fully restart the salt-minion service
-  on each node. You can use a shell script like this to ensure that all
-  salt-minion processes are fully terminated and restarted cleanly,
-
-    ```
-    for m in minion{1..4}
-    do
-        gcloud compute ssh $m --zone us-central1-b --command "/etc/init.d/salt-minion stop"
-        gcloud compute ssh $m --zone us-central1-b --command "pkill salt-minion"
-        gcloud compute ssh $m --zone us-central1-b --command "/etc/init.d/salt-minion start"
-    done
-    ```
 
 ## Contributing
 
