@@ -67,7 +67,7 @@ commands:
 
 ```
 # Create the instance with the proper scope
-gcloud compute instances create salt --scopes https://www.googleapis.com/auth/compute --image debian-7 --image-project debian-cloud --zone us-central1 -b --machine-type n1-standard-1
+gcloud compute instances create salt --scopes https://www.googleapis.com/auth/compute --image debian-7 --zone us-central1-b --machine-type n1-standard-1
 Created [https://www.googleapis.com/compute/v1/projects/YOUR-PROJECT/zones/us-central1-b/instances/salt].
 NAME ZONE          MACHINE_TYPE  INTERNAL_IP    EXTERNAL_IP     STATUS
 salt us-central1-b n1-standard-1 10.240.136.204 123.45.67.89    RUNNING
@@ -317,13 +317,24 @@ accumulate additional charges if you do not remove these resources.
 
 Fortunately, `salt-cloud` also provides commands for destroying Compute
 Engine resources. The following commands can be used to destroy all of the
-resources created for this demo.
+resources created by salt-cloud for this demo.
 
 ```
 salt-cloud -d -m /etc/salt/demo.map
 salt-cloud -f delete_fwrule gce name=allow-http
 salt-cloud -f delete_lb gce name=lb
 ```
+
+If you'd like to destroy the Salt master as well, please do so via the
+[Developers Console](https://console.developers.google.com/) under the 
+*Compute Engine -&gt; VM Instances* section or by running this command from where you created the instance:
+
+```
+gcloud compute instances delete salt --zone us-central1-b
+```
+
+
+
 
 ## Contributing
 
