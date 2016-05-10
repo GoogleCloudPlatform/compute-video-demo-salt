@@ -26,7 +26,7 @@ the foundational tools for building more real-world configurations.
 
 1. You will need to create a Google Cloud Platform Project as a first step.
 Make sure you are logged in to your Google Account (gmail, Google+, etc) and
-point your browser to https://console.developers.google.com/. You should see a
+point your browser to https://console.cloud.google.com/projectselector/compute/instances. You should see a
 page asking you to create your first Project.
 
 1. When creating a Project, you will see a pop-up dialog box. You can specify
@@ -34,18 +34,18 @@ custom names but the *Project ID* is globally unique across all Google Cloud
 Platform customers.
 
 1. It's OK to create a Project first, but you will need to set up billing
-before you can create any virtual machines with Compute Engine. Look for the
-*Billing* link in the left-hand navigation bar.
+before you can create any virtual machines with Compute Engine. Find the menu icon at the top left, 
+then look for the *Billing* link in the navigation bar.
 
 1. In order for `salt-cloud` to create Compute Engine instances, you'll need a
-[Service Account](https://developers.google.com/console/help/new/#serviceaccounts)
+[Service Account](https://cloud.google.com/compute/docs/access/service-accounts#serviceaccount)
 Make sure to download (or generate a new) P12 formatted private key file
 for your Service Account. Also, make sure to record the *Email address* that
 ends with `@developer.gserviceaccount.com` since this will be required in the
 Salt configuration files.
 
 1. Next you will want to install the
-[Cloud SDK](https://developers.google.com/cloud/sdk/) and make sure you've
+[Cloud SDK](https://cloud.google.com/sdk/) and make sure you've
 successfully authenticated and set your default project as instructed.
 
 ## Create the Salt Master Compute Engine instance
@@ -80,6 +80,45 @@ salt us-central1-b n1-standard-1 10.240.136.204 123.45.67.89    RUNNING
     gcloud compute ssh salt --zone us-central1-b
     sudo -i
     ```
+  1. Create a Compute Engine SSH key.
+  If you do not have an existing key, you will be prompted to create one.  Use an Empty Passphrase for the purposes of this demo.  The key will be generated and you will then be logged into the Salt master.  The full output will look similar to:
+    ```
+    you@your-host:~$ gcloud compute ssh salt --zone us-central1-b
+    WARNING: The private SSH key file for Google Compute Engine does not exist.
+    WARNING: You do not have an SSH key for Google Compute Engine.
+    WARNING: [/usr/bin/ssh-keygen] will be executed to generate a key.
+    Generating public/private rsa key pair.
+    Enter passphrase (empty for no passphrase):
+    Enter same passphrase again:
+    Your identification has been saved in /home/user/you/.ssh/google_compute_engine.
+    Your public key has been saved in /home/user/you/.ssh/google_compute_engine.pub.
+    The key fingerprint is:
+    SHA256:OUWq8Hbg5PcFhkG2iSDJJItBZJ0rIOrzbf9BSlwNXo4 you@your-host
+    The key's randomart image is:
+    +---[RSA 2048]----+
+    |=*+.o  .+...     |
+    |=+o+ . o.B*      |
+    |*   o + =E+o     |
+    |.. . *.o.+ .     |
+    |. .   *oS.  .    |
+    | o   ..ooo .     |
+    |  o .  . ..      |
+    |   . o    .      |
+    |    . ....       |
+    +----[SHA256]-----+
+    Updated [https://www.googleapis.com/compute/v1/projects/your-project-id].
+    Warning: Permanently added '104.197.232.237' (ECDSA) to the list of known hosts.
+    Warning: Permanently added '104.197.232.237' (ECDSA) to the list of known hosts.
+    Linux salt 3.2.0-4-amd64 #1 SMP Debian 3.2.78-1 x86_64
+    
+    The programs included with the Debian GNU/Linux system are free software;
+    the exact distribution terms for each program are described in the
+    individual files in /usr/share/doc/*/copyright.
+    
+    Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+    permitted by applicable law.
+    you@salt:~$
+    ```
 
 1. Update packages and install dependencies
     ```
@@ -101,52 +140,6 @@ salt us-central1-b n1-standard-1 10.240.136.204 123.45.67.89    RUNNING
     # from 'develop' known to work with v2014.1.10 and replace the module
     wget https://github.com/saltstack/salt/raw/d99e639411d85fd26f3f120b3266106d61026ea4/salt/cloud/clouds/gce.py
     cp gce.py /usr/lib/python2.7/dist-packages/salt/cloud/clouds/gce.py
-    ```
-
-1. Create a Compute Engine SSH key and upload it to the metadata server.
-The easist way to do this is to use the `gcloud` command-line utility and
-try to SSH from the machine back into itself.
-
-    When prompted, use an Empty Passphrase for the demo. Once logged in through
-this gcloud ssh command, go ahead and log back out. The full output will look
-similar to,
-    ```
-    root@salt:~# gcloud compute ssh salt --zone us-central1-b
-    WARNING: You do not have an SSH key for Google Compute Engine.
-    WARNING: [/usr/bin/ssh-keygen] will be executed to generate a key.
-    Generating public/private rsa key pair.
-    Enter passphrase (empty for no passphrase): 
-    Enter same passphrase again: 
-    Your identification has been saved in /root/.ssh/google_compute_engine.
-    Your public key has been saved in /root/.ssh/google_compute_engine.pub.
-    The key fingerprint is:
-    00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:01 root@salt
-    The key's randomart image is:
-    +--[ RSA 2048]----+
-    | x=       o=B+o =|
-    |         . ooB * |
-    |  9       o . =  |
-    |     +   .   o   |
-    |    o o S     .  |
-    |       +     . . |
-    |   . . ...    E  |
-    |  =         *o   |
-    |   AE.           |
-    +-----------------+
-    Updated [https://www.googleapis.com/compute/v1/projects/YOUR-PROJECT].
-    Warning: Permanently added '100.170.210.204' (ECDSA) to the list of known hosts.
-    Linux salt 3.2.0-4-amd64 #1 SMP Debian 3.2.60-1+deb7u3 x86_64
-
-    The programs included with the Debian GNU/Linux system are free software;
-    the exact distribution terms for each program are described in the
-    individual files in /usr/share/doc/*/copyright.
-
-    Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
-    permitted by applicable law.
-    root@salt:~# exit
-    logout
-    Connection to 107.178.218.254 closed.
-    root@salt:~# 
     ```
 
 ## Salt-Cloud and Demo Setup
