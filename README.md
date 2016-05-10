@@ -81,6 +81,7 @@ salt us-central1-b n1-standard-1 10.240.136.204 123.45.67.89    RUNNING
     sudo -i
     ```
   1. Create a Compute Engine SSH key.
+  
   If you do not have an existing key, you will be prompted to create one.  Use an Empty Passphrase for the purposes of this demo.  The key will be generated and you will then be logged into the Salt master.  The full output will look similar to:
     ```
     you@your-host:~$ gcloud compute ssh salt --zone us-central1-b
