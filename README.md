@@ -18,8 +18,8 @@ At the end of the demo, you will have used SaltStack to automate:
 * Create a Compute Engine Load-balancer to distribute traffic over the 4 instances
 * Do a live test of the full configuration
 
-This is intended to be a fairly trival example. The video and repo show off
-the integration between SalStack and Google Compute Engine.  And, this can be
+This is intended to be a fairly trivial example. The video and repo show off
+the integration between SaltStack and Google Compute Engine.  And, this can be
 the foundational tools for building more real-world configurations.
 
 ## Google Cloud Platform Project
@@ -38,11 +38,12 @@ before you can create any virtual machines with Compute Engine. Find the menu ic
 then look for the *Billing* link in the navigation bar.
 
 1. In order for `salt-cloud` to create Compute Engine instances, you'll need a
-[Service Account](https://cloud.google.com/compute/docs/access/service-accounts#serviceaccount)
+[Service Account](https://cloud.google.com/compute/docs/access/service-accounts#serviceaccount). 
+It's recommended that you use the "Compute Engine default service account" for this demo.
 Make sure to download (or generate a new) P12 formatted private key file
-for your Service Account. Also, make sure to record the *Email address* that
-ends with `@developer.gserviceaccount.com` since this will be required in the
-Salt configuration files.
+for your Service Account as you will need to upload it to your Salt master later on. Also, make sure 
+to record the *Email address* that ends with `@developer.gserviceaccount.com` since 
+this will be required in the Salt configuration files.
 
 1. Next you will want to install the
 [Cloud SDK](https://cloud.google.com/sdk/) and make sure you've
@@ -51,15 +52,16 @@ successfully authenticated and set your default project as instructed.
 ## Create the Salt Master Compute Engine instance
 
 Next you will create a Virtual Machine for your Salt Master named `salt` so
-that your managed nodes (or minions) will be able to automatcially find the
-master. When creating your Master, make sure to enable the `compute` scope
-for *read/write* authorization.
+that your managed nodes (or minions) will be able to automatically find the
+master. When creating your Master, make sure to enable the `Compute` scope
+for *Read/Write* authorization.
 
 You can create the master in the
-[Developers Console](https://console.developers.google.com/)  under the
-*Compute Engine -&gt; VM Instances* section and then click the *New instance*
-button. You may explore around the form to find the appropriate section for
-setting the `compute` *read/write* scope for your new Master.
+[Cloud Console](https://console.cloud.google.com/)  under the
+*Compute Engine -&gt; VM Instances* section and then click the *Create instance*
+button.  It's recommended that you name your instance 'salt'. 
+Under *Identity and API Access -&gt; Set access for each API* you will find the
+`Compute` scope.  Set this to *Read/Write* scope for your new Master.
 
 Or, you can create the Salt master with the `gcloud` command-line utility
 (part of the Cloud SDK) from your local workstation with the following
@@ -82,34 +84,67 @@ salt us-central1-b n1-standard-1 10.240.136.204 123.45.67.89    RUNNING
     ```
   1. Create a Compute Engine SSH key.
   
-  If you do not have an existing key, you will be prompted to create one.  Use an Empty Passphrase for the purposes of this demo.  The key will be generated and you will then be logged into the Salt master.  The full output will look similar to:
+    If you do not have an existing key, you will be prompted to create one.  This key will allow you to connect from your host (non-Google Cloud) machine via SSH to any of your instances in your project.  You may use an Empty Passphrase but should keep this safe.  We will generate another key later in the installation to allow the Salt master to talk to the Minions.  The document [Adding and Removing SSH keys](https://cloud.google.com/compute/docs/instances/adding-removing-ssh-keys#project-wide) describes SSH key management in more detail.
+
+1. Update packages and install dependencies
     ```
-    you@your-host:~$ gcloud compute ssh salt --zone us-central1-b
+    apt-get update
+    apt-get install python-pip git -y
+    ```
+
+1. Install libcloud (v1.0.0-rc2 or greater)
+    ```
+    pip install apache-libcloud
+    ```
+
+1. Install salt (v2015.8.8 for this demo)
+    ```
+    curl -o salt_install.sh -L http://bootstrap.saltstack.org
+    sh salt_install.sh -P -M -N git v2015.8.8
+    ```
+
+1. The provided bootstrap script from SaltStack has a known issue that prevents Minions from being installed on new nodes.  Upgrade the salt-cloud bootstrap script to fix this:
+   ```
+   salt-cloud -u
+   ```
+   
+1. Create a Compute Engine SSH key and upload it to the metadata server. This key will be generated for the user, 'saltuser', which will be used to 
+create the Minions.  The easiest way to do this is to use the 
+`gcloud` command-line utility and try to SSH from the machine back into itself.  When prompted, use an Empty Passphrase 
+for the demo. Once logged in through this gcloud ssh command, go ahead and log back out. The full output will look similar to,
+
+    ```
+    root@salt:~# gcloud compute ssh saltuser@salt --zone us-central1-b
     WARNING: The private SSH key file for Google Compute Engine does not exist.
     WARNING: You do not have an SSH key for Google Compute Engine.
     WARNING: [/usr/bin/ssh-keygen] will be executed to generate a key.
+    This tool needs to create the directory [/root/.ssh] before being able
+    to generate SSH keys.
+    
+    Do you want to continue (Y/n)?  Y
+ 
     Generating public/private rsa key pair.
-    Enter passphrase (empty for no passphrase):
-    Enter same passphrase again:
-    Your identification has been saved in /home/user/you/.ssh/google_compute_engine.
-    Your public key has been saved in /home/user/you/.ssh/google_compute_engine.pub.
+    Enter passphrase (empty for no passphrase): 
+    Enter same passphrase again: 
+    Your identification has been saved in /root/.ssh/google_compute_engine.
+    Your public key has been saved in /root/.ssh/google_compute_engine.pub.
     The key fingerprint is:
-    SHA256:OUWq8Hbg5PcFhkG2iSDJJItBZJ0rIOrzbf9BSlwNXo4 you@your-host
+    b9:e1:9b:0e:b2:88:f5:06:f2:8e:43:2d:c5:7f:55:5c root@salt
     The key's randomart image is:
-    +---[RSA 2048]----+
-    |=*+.o  .+...     |
-    |=+o+ . o.B*      |
-    |*   o + =E+o     |
-    |.. . *.o.+ .     |
-    |. .   *oS.  .    |
-    | o   ..ooo .     |
-    |  o .  . ..      |
-    |   . o    .      |
-    |    . ....       |
-    +----[SHA256]-----+
-    Updated [https://www.googleapis.com/compute/v1/projects/your-project-id].
-    Warning: Permanently added '104.197.232.237' (ECDSA) to the list of known hosts.
-    Warning: Permanently added '104.197.232.237' (ECDSA) to the list of known hosts.
+    +--[ RSA 2048]----+
+    |             E   |
+    |          . .    |
+    |           o     |
+    |  .      ..      |
+    |   o    S.       |
+    |. + .  ..o       |
+    | =.o....o        |
+    |oooo.o.. o       |
+    |=o..o  .+        |
+    +-----------------+
+    Updated [https://www.googleapis.com/compute/v1/projects/YOUR-PROJECT-ID].
+    Warning: Permanently added '24.258.154.215' (ECDSA) to the list of known hosts.
+    Warning: Permanently added '24.258.154.215' (ECDSA) to the list of known hosts.
     Linux salt 3.2.0-4-amd64 #1 SMP Debian 3.2.78-1 x86_64
     
     The programs included with the Debian GNU/Linux system are free software;
@@ -118,30 +153,9 @@ salt us-central1-b n1-standard-1 10.240.136.204 123.45.67.89    RUNNING
     
     Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
     permitted by applicable law.
-    you@salt:~$
+    saltuser@salt:~$
     ```
-
-1. Update packages and install dependencies
-    ```
-    apt-get update
-    apt-get install python-pip git -y
-    ```
-
-1. Install libcloud (v0.14.1 or greater)
-    ```
-    pip install apache-libcloud
-    ```
-
-1. Install salt (v2014.1.4 or greater)
-    ```
-    curl -o salt_install.sh -L http://bootstrap.saltstack.org
-    sh salt_install.sh -M -N git v2014.1.10
-
-    # v2014.1.x is missing some GCE capabilities so let's copy a version
-    # from 'develop' known to work with v2014.1.10 and replace the module
-    wget https://github.com/saltstack/salt/raw/d99e639411d85fd26f3f120b3266106d61026ea4/salt/cloud/clouds/gce.py
-    cp gce.py /usr/lib/python2.7/dist-packages/salt/cloud/clouds/gce.py
-    ```
+Be sure to log back out!
 
 ## Salt-Cloud and Demo Setup
 
@@ -164,17 +178,22 @@ to customize them with your credentials.
     cp -R ~/compute-video-demo-salt/srv/* /srv
     ```
 
-1. Now you will need to get a copy of your private Service Account key
-uploaded to your `salt` master in the proper format.  Once uploaded, you can
-convert the Service Account private key file from the PKCS12 format to the
-RSA/PEM file format.  You can do that with the `openssl` utility,
+1. Next, you'll set up your private Service Account key on the Salt master.
+  1. Upload a copy of your private Service Account key to your `salt` master (this is the file we downloaded earlier).  You may do this with [scp](https://cloud.google.com/compute/docs/instances/transfer-files#scp), 
+  or by using gcloud's copy-files command.
+    1. Copy p12 file using `gcloud` compute copy-files
+      From your host machine (NOT the Salt master), you can use the *gcloud compute copy-files* command to
+   copy the file to the Compute Engine 'salt' master, like so:
+   ```
+   gcloud compute copy-files /path/to/project-id-0375632f3fe4.p12 salt:~ --zone us-central1-b
+   ```   
+  1. Once uploaded, you can convert the Service Account private key file from the PKCS12 format to the
+RSA/PEM file format.  You can do that with the `openssl` utility.  On the 'salt' master, as root, run,
     ```
-    openssl pkcs12 -in /path/to/original/key.p12 -passin pass:notasecret -nodes -nocerts | openssl rsa -out /etc/salt/pkey.pem
-
+    openssl pkcs12 -in /home/USER/project-id-0375632f3fe4.p12 -passin pass:notasecret -nodes -nocerts | openssl rsa -out /etc/salt/pkey.pem
     # Since this is your private key, you should set appropriate permissions
     chmod 600 /etc/salt/pkey.pem
     ```
-
 1. Lastly, edit the `/etc/salt/cloud` file and specify set your Project ID in
 the `project` parameter and also set your `service_account_email_address`. Note
 that if you used an alternate location for your converted Service Account key,
@@ -246,16 +265,16 @@ salt '*' state.highstate
 ## Firewall rule
 
 1. Great, now you have salt minions serving a custom site page via Apache!
-But if you've tried to view one of your instance's site via it's public IP,
+But if you've tried to view one of your instance's site via its public IP,
 you'll notice that it's not working. The reason is that, by default, no
 external network traffic is allowed to reach your Compute Engine instances
-(except for SSH on port 22). In order to allow HTTP (port 80) traffice to 
+(except for SSH on port 22). In order to allow HTTP (port 80) traffic to 
 your instances, you must first create a firewall rule on your `default`
 network.
 
     Fortunately, `salt-cloud` has this capability. If you're not used to the
 syntax below, you are calling the `create_fwrule` function (`-f`) and
-specifying the privider (`gce` in this case). Next, you are providing the
+specifying the provider (`gce` in this case). Next, you are providing the
 minimum required parameters to create the rule. This command should take around
 5-10 seconds to complete.
     ```
@@ -288,9 +307,9 @@ your browser and take a look at the result. Within a few seconds you should
 start to see a flicker of pages that will randomly bounce across each of your
 instances.
 
-    For the demo, a javascript function is set to fire when the page loads
+For the demo, a javascript function is set to fire when the page loads
 that pauses for a half-second, and then reloads itself. Since we installed
-a modified Apache configuraiton file to disable client-side caching *and* we
+a modified Apache configuration file to disable client-side caching *and* we
 enabled Apache's `mod_headers`, each "reload" results in a new HTTP request
 to the page. This is just a fancy hands-free way of asking you to do a
 "hard refresh" of the load-balancer IP address in order to see the cycling
@@ -312,7 +331,6 @@ accumulate additional charges if you do not remove these resources.
 Fortunately, `salt-cloud` also provides commands for destroying Compute
 Engine resources. The following commands can be used to destroy all of the
 resources created by salt-cloud for this demo.
-
 ```
 salt-cloud -d -m /etc/salt/demo.map
 salt-cloud -f delete_fwrule gce name=allow-http
@@ -320,15 +338,12 @@ salt-cloud -f delete_lb gce name=lb
 ```
 
 If you'd like to destroy the Salt master as well, please do so via the
-[Developers Console](https://console.developers.google.com/) under the 
+[Cloud Console](https://console.cloud.google.com/) under the 
 *Compute Engine -&gt; VM Instances* section or by running this command from where you created the instance:
 
 ```
 gcloud compute instances delete salt --zone us-central1-b
 ```
-
-
-
 
 ## Contributing
 
