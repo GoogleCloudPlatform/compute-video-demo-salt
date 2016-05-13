@@ -39,10 +39,10 @@ then look for the *Billing* link in the navigation bar.
 
 1. In order for `salt-cloud` to create Compute Engine instances, you'll need a
 [Service Account](https://cloud.google.com/compute/docs/access/service-accounts#serviceaccount). 
-It's recommended that you use the "Compute Engine default service account" for this demo.
-Make sure to download (or generate a new) P12 formatted private key file
+It's recommended that you create a new Service Account (don't use the default) for this demo.
+Make sure to create a new JSON formatted private key file
 for your Service Account as you will need to upload it to your Salt master later on. Also, make sure 
-to record the *Email address* that ends with `@developer.gserviceaccount.com` since 
+to record the *Email address* that ends with `@PROJECT-ID.iam.gserviceaccount.com` since 
 this will be required in the Salt configuration files.
 
 1. Next you will want to install the
@@ -184,14 +184,13 @@ to customize them with your credentials.
   1. Upload a copy of your private Service Account key to your `salt` master (this is the file we downloaded earlier).  You may do this with [scp](https://cloud.google.com/compute/docs/instances/transfer-files#scp), 
   or by using gcloud's copy-files command, like so:
    ```
-   gcloud compute copy-files /path/to/project-id-0375632f3fe4.p12 salt:~ --zone us-central1-b
+   gcloud compute copy-files /path/to/project-id-0375632f3fe4.json salt:~/demo-salt.json --zone us-central1-b
    ```
-  1. Once uploaded, you can convert the Service Account private key file from the PKCS12 format to the
-RSA/PEM file format.  You can do that with the `openssl` utility.  On the 'salt' master, as root, run,
+  1. Once uploaded, we need to move it into the right location. As root, run,
     ```
-    openssl pkcs12 -in /home/USER/project-id-0375632f3fe4.p12 -passin pass:notasecret -nodes -nocerts | openssl rsa -out /etc/salt/pkey.pem
+    mv /home/USER/demo-salt.json /etc/salt/demo-salt.json
     # Since this is your private key, you should set appropriate permissions
-    chmod 600 /etc/salt/pkey.pem
+    chmod 600 /etc/salt/demo-salt.json
     ```
 1. Lastly, edit the `/etc/salt/cloud` file and specify set your Project ID in
 the `project` parameter and also set your `service_account_email_address`. Note
