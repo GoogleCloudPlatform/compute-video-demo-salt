@@ -39,10 +39,10 @@ then look for the *Billing* link in the navigation bar.
 
 1. In order for `salt-cloud` to create Compute Engine instances, you'll need a
 [Service Account](https://cloud.google.com/compute/docs/access/service-accounts#serviceaccount). 
-It's recommended that you create a new Service Account (don't use the default) for this demo.
-Make sure to create a new JSON formatted private key file
-for your Service Account as you will need to upload it to your Salt master later on. Also, make sure 
-to record the *Email address* that ends with `@PROJECT-ID.iam.gserviceaccount.com` since 
+It's recommended that you create a new Service Account (don't use the default), called 'demo-salt', for this demo.
+Make sure to create a new JSON formatted private key file for this Service Account as you 
+will need to upload it to your Salt master later on. Also, note the *Email address* 
+of this Service Account (should be `demo-salt@PROJECT-ID.iam.gserviceaccount.com`) since 
 this will be required in the Salt configuration files.
 
 1. Next you will want to install the
