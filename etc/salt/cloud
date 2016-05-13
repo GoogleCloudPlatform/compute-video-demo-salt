@@ -1,7 +1,7 @@
 providers:
   gce-config:
-    project: '...'
-    service_account_email_address: '...@developer.gserviceaccount.com'
-    service_account_private_key: '/etc/salt/pkey.pem'
-    provider: gce
+    project: 'PROJECT-ID'
+    service_account_email_address: 'demo-salt@PROJECT-ID.iam.gserviceaccount.com'
+    service_account_private_key: '/etc/salt/demo-salt.json'
+    driver: gce
 
