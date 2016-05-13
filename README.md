@@ -183,15 +183,15 @@ to customize them with your credentials.
 1. Next, you'll set up your private Service Account key on the Salt master.
   1. Upload a copy of your private Service Account key to your `salt` master (this is the file we downloaded earlier).  You may do this with [scp](https://cloud.google.com/compute/docs/instances/transfer-files#scp), 
   or by using gcloud's copy-files command, like so:
-   ```
-   gcloud compute copy-files /path/to/project-id-0375632f3fe4.json salt:~/demo-salt.json --zone us-central1-b
-   ```
-  1. Once uploaded, we need to move it into the right location. As root, run,
-    ```
-    mv /home/USER/demo-salt.json /etc/salt/demo-salt.json
-    # Since this is your private key, you should set appropriate permissions
-    chmod 600 /etc/salt/demo-salt.json
-    ```
+  ```
+  gcloud compute copy-files /path/to/project-id-0375632f3fe4.json salt:~/demo-salt.json --zone us-central1-b
+  ```
+  1. Once uploaded, we need to move it into the right location. As root, run:
+  ```
+  mv /home/USER/demo-salt.json /etc/salt/demo-salt.json
+  # Since this is your private key, you should set appropriate permissions
+  chmod 600 /etc/salt/demo-salt.json
+  ```
 1. Lastly, edit the `/etc/salt/cloud` file and specify set your Project ID in
 the `project` parameter and also set your `service_account_email_address`. Note
 that if you used an alternate location for your converted Service Account key,
