@@ -93,7 +93,7 @@ salt us-central1-b n1-standard-1 10.240.136.204 123.45.67.89    RUNNING
     apt-get install python-pip git -y
     ```
 
-1. Install libcloud (v1.0.0-rc2 or greater)
+1. Install libcloud (v0.14.1 or greater)
     ```
     pip install apache-libcloud
     ```
