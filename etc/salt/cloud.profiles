@@ -1,7 +1,7 @@
 zone1a:
   minion:
     master: salt
-    master_type: standard
+    master_type: str
   image: debian-7
   ssh_username: saltuser
   size: n1-standard-1
